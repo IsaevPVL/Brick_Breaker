@@ -31,9 +31,6 @@ public class Boundaries : MonoBehaviour
     Vector3 bottomRightCorner;
     Vector3 bottomLeftCorner;
 
-    int test;
-
-
     private void Awake() {
         cam = Camera.main;
 
