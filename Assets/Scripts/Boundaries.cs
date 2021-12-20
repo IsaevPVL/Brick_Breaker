@@ -11,89 +11,66 @@ public class Boundaries : MonoBehaviour
     public float offset = 0.1f;
     public float lineWidth = 0.05f;
 
-    EdgeCollider2D edge;
-    LineRenderer line;
-
-    //public GameObject[] boundaries = new GameObject[4];
-
     public GameObject top;
     public GameObject right;
     public GameObject bottom;
     public GameObject left;
-
-    public GameObject visibleTop;
-    public GameObject visibleRight;
-    public GameObject visibleBottom;
-    public GameObject visibleLeft;
 
     Vector3 topLeftCorner;
     Vector3 topRightCorner;
     Vector3 bottomRightCorner;
     Vector3 bottomLeftCorner;
 
-    private void Awake() {
+    private void Awake()
+    {
         cam = Camera.main;
+        
+        FindBoundaries();
+        SetLine(top, new Mesh(), topLeftCorner, topRightCorner);
+        top.transform.position = new Vector3(top.transform.position.x, height, height);
 
+        SetLine(right, new Mesh(), topRightCorner, bottomRightCorner);
+        right.transform.position = new Vector3(width, right.transform.position.y, width);
 
+        SetLine(bottom, new Mesh(), bottomRightCorner, bottomLeftCorner);
+        bottom.transform.position = new Vector3(bottom.transform.position.x, -height, height);
+
+        SetLine(left, new Mesh(), bottomLeftCorner, topLeftCorner);
+        left.transform.position = new Vector3(-width, left.transform.position.y, width);
     }
 
-    private void Start() {
+    private void Start()
+    {
 
     }
 
     void Update()
     {
-        FindBoundaries();
-        //SetBoundaries();
-        SetLine(top, visibleTop, topLeftCorner, topRightCorner);
-        SetLine(right, visibleRight, topRightCorner, bottomRightCorner);
-        SetLine(bottom, visibleBottom, bottomRightCorner, bottomLeftCorner);
-        SetLine(left, visibleLeft, bottomLeftCorner, topLeftCorner);
-
     }
 
-    void SetLine(GameObject position, GameObject visiblePosition, Vector3 startPoint, Vector3 endPoint){
-        Vector3[] endpoints = new Vector3[] {startPoint, endPoint};
-        LineRenderer line = position.GetComponent<LineRenderer>();
+    void SetLine(GameObject segment, Mesh mesh, Vector3 startPoint, Vector3 endPoint)
+    {
+        Vector3[] endpoints = new Vector3[] { startPoint, endPoint };
+        LineRenderer line = segment.GetComponent<LineRenderer>();
         line.positionCount = endpoints.Length;
         line.SetPositions(endpoints);
         line.startWidth = lineWidth;
         line.endWidth = lineWidth;
 
-        LineRenderer lineVisible = visiblePosition.GetComponent<LineRenderer>();
-        lineVisible.positionCount = endpoints.Length;
-        lineVisible.SetPositions(endpoints);
-        lineVisible.startWidth = lineWidth;
-        lineVisible.endWidth = lineWidth;
-    }
-    
+        line.BakeMesh(mesh, false);
+        segment.GetComponent<MeshFilter>().mesh = mesh;
 
-    void FindBoundaries(){
-        width = 1/(cam.WorldToViewportPoint(new Vector3(1, 1, 0)).x - 0.5f) - offset;
-        height = 1/(cam.WorldToViewportPoint(new Vector3(1, 1, 0)).y - 0.5f) - offset;
-
-        topLeftCorner = new Vector2(-width / 2, height / 2);
-        topRightCorner = new Vector2(width / 2, height / 2);
-        bottomRightCorner = new Vector2(width / 2, -height / 2);
-        bottomLeftCorner = new Vector2(-width / 2, -height / 2);
+        segment.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
-    void SetBoundaries(){
-        Vector2 pointA = new Vector2(-width / 2, -height / 2);
-        Vector2 pointB = new Vector2(-width / 2, height / 2);
-        Vector2 pointC = new Vector2(width / 2, height / 2);
-        Vector2 pointD = new Vector2(width / 2, -height / 2);
-        Vector2[] pointArray = new Vector2[] {pointA, pointB, pointC, pointD, pointA};
-        edge.points = pointArray;
+    void FindBoundaries()
+    {
+        width = (1 / (cam.WorldToViewportPoint(new Vector3(1, 1, 0)).x - 0.5f) - offset) / 2;
+        height = (1 / (cam.WorldToViewportPoint(new Vector3(1, 1, 0)).y - 0.5f) - offset) / 2;
 
-        line.positionCount = pointArray.Length;
-        line.startWidth = lineWidth;
-        line.endWidth = lineWidth;
-        Vector3[] positions = new Vector3[] {pointA, pointB, pointC, pointD, pointA};
-        line.SetPositions(positions);
-    }
-
-    void DrawLine(){
-        
+        topLeftCorner = new Vector2(-width, height);
+        topRightCorner = new Vector2(width, height);
+        bottomRightCorner = new Vector2(width, -height);
+        bottomLeftCorner = new Vector2(-width, -height);
     }
 }
