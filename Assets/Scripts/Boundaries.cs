@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Boundaries : MonoBehaviour
@@ -32,8 +30,11 @@ public class Boundaries : MonoBehaviour
         SetLine(right, new Mesh(), topRightCorner, bottomRightCorner);
         right.transform.position = new Vector3(width, right.transform.position.y, width);
 
-        SetLine(bottom, new Mesh(), bottomRightCorner, bottomLeftCorner);
-        bottom.transform.position = new Vector3(bottom.transform.position.x, -height, height);
+        LineRenderer bottomLine = SetLine(bottom, new Mesh(), bottomRightCorner, bottomLeftCorner);
+        bottom.transform.position = new Vector3(bottom.transform.position.x, -height + 11.6f, height - 11.6f);
+        //4.6 temporary value
+        bottomLine.startColor = Color.red;
+        bottomLine.endColor = Color.red;
 
         SetLine(left, new Mesh(), bottomLeftCorner, topLeftCorner);
         left.transform.position = new Vector3(-width, left.transform.position.y, width);
@@ -41,14 +42,13 @@ public class Boundaries : MonoBehaviour
 
     private void Start()
     {
-
     }
 
     void Update()
     {
     }
 
-    void SetLine(GameObject segment, Mesh mesh, Vector3 startPoint, Vector3 endPoint)
+    LineRenderer SetLine(GameObject segment, Mesh mesh, Vector3 startPoint, Vector3 endPoint)
     {
         Vector3[] endpoints = new Vector3[] { startPoint, endPoint };
         LineRenderer line = segment.GetComponent<LineRenderer>();
@@ -61,6 +61,10 @@ public class Boundaries : MonoBehaviour
         segment.GetComponent<MeshFilter>().mesh = mesh;
 
         segment.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+        segment.GetComponent<MeshRenderer>().enabled = false;
+
+        return line;
     }
 
     void FindBoundaries()
@@ -68,9 +72,14 @@ public class Boundaries : MonoBehaviour
         width = (1 / (cam.WorldToViewportPoint(new Vector3(1, 1, 0)).x - 0.5f) - offset) / 2;
         height = (1 / (cam.WorldToViewportPoint(new Vector3(1, 1, 0)).y - 0.5f) - offset) / 2;
 
+
         topLeftCorner = new Vector2(-width, height);
         topRightCorner = new Vector2(width, height);
-        bottomRightCorner = new Vector2(width, -height);
-        bottomLeftCorner = new Vector2(-width, -height);
+        bottomRightCorner = new Vector2(width, -height + 11.6f);
+        bottomLeftCorner = new Vector2(-width, -height + 11.6f);
+    }
+
+    void FindBoundaries2(){
+
     }
 }
