@@ -9,11 +9,12 @@ TagManager:
   - Brick
   - Bottom
   - Boundary
+  - Direction Change
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Post Processing
   - Water
   - UI
   - Paddle

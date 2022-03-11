@@ -1,29 +1,39 @@
 using UnityEngine;
+using System.Collections;
 
 public class Dragging : MonoBehaviour
 {
     #region Variables
     [SerializeField, Range(0, 1)] float timeScaleMultiplyer = 0.2f;
     public Ball ball;
+    public float afterLaunchLerp = 1f;
 
     float distanceZ;
     bool isDragging = false;
     bool isLaunched = false;
-    bool isPulling = false;
     Vector3 paddleOffset;
     Vector3 moveTo;
     Vector3 pullTo;
     Transform toDrag;
     Vector3 paddleDefaultPosition;
+    Quaternion paddleDefaultRotation;
     Vector3 paddlePositionAtTouch;
     Rigidbody rb;
     Camera cam;
+    //int tapCount;
+    bool tappedOnce;
 
     float width;
     float widthMin;
     float widthMax;
 
     float fixedDeltaTime;
+
+    //Direction Change
+    bool isChangingDirection;
+    Vector3 directionCentre;
+    Vector3 desiredDirection;
+
     #endregion
 
     void Awake()
@@ -33,23 +43,29 @@ public class Dragging : MonoBehaviour
 
         this.fixedDeltaTime = Time.fixedDeltaTime;
 
-    }
-
-    void Start()
-    {
         width = 1 / (cam.WorldToViewportPoint(new Vector3(1, 1, 0)).x - 0.5f);
         widthMin = -width / 2f + .7f;
         widthMax = width / 2f - .7f;
 
         paddleDefaultPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        
+        paddleDefaultRotation = transform.rotation;
+        ResetPaddle();
+    }
+
+    void Start()
+    {
+
     }
 
     void Update()
     {
+        int PostProsessinglayerMask = 3 << 8;
+        PostProsessinglayerMask = ~PostProsessinglayerMask;
+
         if (Input.touchCount == 0)
         {
             isDragging = false;
+            isChangingDirection = false;
         }
         else
         {
@@ -60,88 +76,103 @@ public class Dragging : MonoBehaviour
             {
                 Ray ray = cam.ScreenPointToRay(touchPosition);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, PostProsessinglayerMask))
                 {
+                    distanceZ = hit.transform.position.z - cam.transform.position.z;
+
                     if (hit.collider.CompareTag("Paddle"))
                     {
                         toDrag = hit.transform;
                         paddlePositionAtTouch = hit.transform.position;
-                        distanceZ = hit.transform.position.z - cam.transform.position.z;
-                        
+                        //distanceZ = hit.transform.position.z - cam.transform.position.z;
+
                         Vector3 paddleContactLocation = new Vector3(touchPosition.x, touchPosition.y, distanceZ);
                         paddleContactLocation = cam.ScreenToWorldPoint(paddleContactLocation);
-                        //paddleOffset = toDrag.position - paddleContactLocation;
                         paddleOffset = paddlePositionAtTouch - paddleContactLocation;
                         isDragging = true;
+
+                        if (!isLaunched)
+                        {
+                            if (tappedOnce)
+                            {
+                                LaunchBall();
+                                tappedOnce = false;
+                                StopCoroutine(DoubleTapCountdown());
+                            }
+                            tappedOnce = true;
+                            StartCoroutine(DoubleTapCountdown());
+                        }
+                    }
+                    else if (hit.collider.CompareTag("Direction Change"))
+                    {
+                        isChangingDirection = true;
+                        directionCentre = hit.collider.transform.position;
                     }
                 }
             }
 
             if (isDragging && touch.phase == TouchPhase.Moved)
             {
+                moveTo = new Vector3(touchPosition.x, paddlePositionAtTouch.y, distanceZ);
+                moveTo = cam.ScreenToWorldPoint(moveTo) + new Vector3(paddleOffset.x, 0, 0);
+                moveTo = new Vector3(Mathf.Clamp(moveTo.x, widthMin, widthMax), paddleDefaultPosition.y, moveTo.z);
 
-                if (Mathf.Abs(touch.deltaPosition.y) > 50f || isPulling)
-                {
-                    isPulling = true;
-                }
-                else
-                {
-                    isPulling = false;
-                }
-
-                if (isPulling && !isLaunched)
-                {
-
-                    pullTo = new Vector3(toDrag.position.x, touchPosition.y, distanceZ);
-                    pullTo = cam.ScreenToWorldPoint(pullTo) + new Vector3(0, paddleOffset.y, 0);
-                    pullTo = new Vector3(toDrag.position.x, Mathf.Clamp(pullTo.y, paddleDefaultPosition.y - 0.5f, paddleDefaultPosition.y), pullTo.z);
-
-                    rb.MovePosition(pullTo);
-                }
-
-                if (!isPulling)
-                {
-                    moveTo = new Vector3(touchPosition.x, paddlePositionAtTouch.y, distanceZ);
-                    moveTo = cam.ScreenToWorldPoint(moveTo) + new Vector3(paddleOffset.x, 0, 0);
-                    moveTo = new Vector3(Mathf.Clamp(moveTo.x, widthMin, widthMax), paddleDefaultPosition.y, moveTo.z);
-
-                    rb.MovePosition(moveTo);
-                    //rb.position = moveTo;
-                    
-                }
+                rb.MovePosition(moveTo);
             }
 
-            if (isDragging && (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended))
+            if (isChangingDirection && (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary))
             {
-                if (isPulling)
-                {
-                    rb.MovePosition(new Vector3(rb.position.x, paddleDefaultPosition.y, paddleDefaultPosition.z));
-                    if (!isLaunched)
-                    {
-                        ball.transform.SetParent(null);
-                        ball.rb.isKinematic = false;
-                        ball.rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                        //ball.rb.velocity = new Vector3(0, 1 * Mathf.Abs(ball.velocity), 0);
-                        //ball.currentDirection = Vector3.up;
-                        ball.rb.AddForce(Vector3.up * ball.speed, ForceMode.VelocityChange);
-                        //rb.AddForce(new Vector3(0, 1 * Mathf.Abs(ball.velocity), 0), ForceMode.VelocityChange);
-                        isLaunched = true;
-                    }
-                    isPulling = false;
-                }
-                isDragging = false;
+                desiredDirection = cam.ScreenToWorldPoint(new Vector3(touchPosition.x, touchPosition.y, distanceZ));
+
+                Debug.DrawLine(directionCentre, desiredDirection, Color.magenta);
+                Vector3 ballOffset = ball.transform.position - directionCentre;
+                Debug.DrawLine(ball.transform.position, desiredDirection + ballOffset);
+
+                desiredDirection = (desiredDirection + ballOffset) - ball.transform.position;
+
+                Debug.Log(desiredDirection.magnitude);
+
+            }
+
+            if (isChangingDirection && touch.phase == TouchPhase.Ended)
+            {
+                ball.GetComponent<Rigidbody>().velocity = desiredDirection.normalized * ball.speed;
             }
         }
 
-        if (isDragging)
+        //Slow-motion
+        if (isDragging || !ball.isCollidedAfterLaunch)
         {
             Time.timeScale = 1;
             Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
         }
-        else if(!isDragging)
+        else
         {
             Time.timeScale = timeScaleMultiplyer;
             Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
         }
+    }
+
+    void ResetPaddle()
+    {
+        transform.position = paddleDefaultPosition;
+        transform.rotation = paddleDefaultRotation;
+        isLaunched = false;
+    }
+
+    void LaunchBall()
+    {
+        ball.transform.SetParent(null);
+        ball.rb.isKinematic = false;
+        ball.rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        //ball.rb.velocity = new Vector3(0, 1 * Mathf.Abs(ball.velocity), 0);
+        ball.rb.AddForce(Vector3.up * ball.speed, ForceMode.VelocityChange);
+        isLaunched = true;
+    }
+
+    private IEnumerator DoubleTapCountdown()
+    {
+        yield return new WaitForSeconds(0.3f);
+        tappedOnce = false;
     }
 }

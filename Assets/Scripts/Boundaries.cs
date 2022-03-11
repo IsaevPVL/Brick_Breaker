@@ -31,10 +31,10 @@ public class Boundaries : MonoBehaviour
         right.transform.position = new Vector3(width, right.transform.position.y, width);
 
         LineRenderer bottomLine = SetLine(bottom, new Mesh(), bottomRightCorner, bottomLeftCorner);
-        bottom.transform.position = new Vector3(bottom.transform.position.x, -height + 11.6f, height - 11.6f);
-        //4.6 temporary value
-        bottomLine.startColor = Color.red;
-        bottomLine.endColor = Color.red;
+        bottom.transform.position = new Vector3(bottom.transform.position.x, -height, height);
+        // + 10f temporary value to offset from the bottom
+        //bottomLine.startColor = Color.red;
+        //bottomLine.endColor = Color.red;
 
         SetLine(left, new Mesh(), bottomLeftCorner, topLeftCorner);
         left.transform.position = new Vector3(-width, left.transform.position.y, width);
@@ -75,11 +75,7 @@ public class Boundaries : MonoBehaviour
 
         topLeftCorner = new Vector2(-width, height);
         topRightCorner = new Vector2(width, height);
-        bottomRightCorner = new Vector2(width, -height + 11.6f);
-        bottomLeftCorner = new Vector2(-width, -height + 11.6f);
-    }
-
-    void FindBoundaries2(){
-
+        bottomRightCorner = new Vector2(width, -height);
+        bottomLeftCorner = new Vector2(-width, -height);
     }
 }

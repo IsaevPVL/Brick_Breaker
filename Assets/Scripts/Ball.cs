@@ -30,6 +30,7 @@ public class Ball : MonoBehaviour
         // {
         //     Debug.Log(contact.otherCollider.gameObject.name);
         // }
+        isCollidedAfterLaunch = true;
 
 
         if (collision.gameObject.CompareTag("Bottom"))
@@ -37,23 +38,28 @@ public class Ball : MonoBehaviour
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
 
-        if (collision.contactCount == 1)
+        if (collision.collider.CompareTag("Paddle"))
         {
-            if (collision.collider.CompareTag("Paddle"))
-            {
-                CollideWithPaddle(collision);
-            }
-            else
-            {
-                CollideWithOne(collision);
-            }
-        }
-        else
-        {
-            CollideWithMultiple(collision);
+            CollideWithPaddle(collision);
         }
 
-        Debug.Log("Collided to: " + direction);
+        // if (collision.contactCount == 1)
+        // {
+        //     if (collision.collider.CompareTag("Paddle"))
+        //     {
+        //         CollideWithPaddle(collision);
+        //     }
+        //     else
+        //     {
+        //         CollideWithOne(collision);
+        //     }
+        // }
+        // else
+        // {
+        //     CollideWithMultiple(collision);
+        // }
+
+        // Debug.Log("Collided to: " + direction);
     }
 
 
@@ -63,6 +69,10 @@ public class Ball : MonoBehaviour
         //     Vector3 correctedDirection = GameObject.FindWithTag("Paddle").transform.position - transform.position;
         //     NormalizeAndSetVelocity(correctedDirection);
         // }
+    }
+
+    private void OnCollisionExit(Collision other) {
+        rb.velocity = rb.velocity.normalized * speed;
     }
 
     void CollideWithPaddle(Collision collision)
