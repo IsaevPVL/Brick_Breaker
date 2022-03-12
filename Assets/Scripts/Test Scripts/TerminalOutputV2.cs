@@ -106,12 +106,12 @@ public class TerminalOutputV2 : MonoBehaviour
 
     IEnumerator PrintLastLine(string line, float delay = 0.02f)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         foreach (char character in line.ToCharArray())
         {
             StopRunningCursor();
             screen.text += character;
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
         }
     }
 
@@ -163,7 +163,7 @@ public class TerminalOutputV2 : MonoBehaviour
                 cursorVisible = false;
             }
 
-            yield return new WaitForSeconds(cursorBlinkingTime);
+            yield return new WaitForSecondsRealtime(cursorBlinkingTime);
         }
     }
 }
