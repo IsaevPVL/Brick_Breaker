@@ -3,76 +3,50 @@ using UnityEngine.SceneManagement;
 
 public class Ball : MonoBehaviour
 {
-    public float contactMultiplier = 1f;
     public Rigidbody rb;
+    public float contactMultiplier = 1f;
+    public float speed = 10f;
+    
     public bool isCollidedAfterLaunch = false;
 
-    public float speed = 10f;
-
-    Vector3 lastVelocity;
-    Vector3 direction;
-    Vector3 normalSum;
-
-    private void Awake()
+    private void OnEnable()
     {
+        PaddleControl.PaddleDoubleTapped += LaunchBall;
+
         rb = GetComponent<Rigidbody>();
     }
 
-    private void FixedUpdate()
+    private void OnDisable()
     {
-        //lastVelocity = rb.velocity;
+        PaddleControl.PaddleDoubleTapped -= LaunchBall;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Debug.Log(-collision.relativeVelocity);
-        // foreach (ContactPoint contact in collision.contacts)
-        // {
-        //     Debug.Log(contact.otherCollider.gameObject.name);
-        // }
         isCollidedAfterLaunch = true;
 
-
-        if (collision.gameObject.CompareTag("Bottom"))
+        if (collision.collider.CompareTag("Bottom"))
         {
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
 
-        if (collision.collider.CompareTag("Paddle"))
+        if (collision.collider.CompareTag("Hitter"))
         {
             CollideWithPaddle(collision);
         }
-
-        // if (collision.contactCount == 1)
-        // {
-        //     if (collision.collider.CompareTag("Paddle"))
-        //     {
-        //         CollideWithPaddle(collision);
-        //     }
-        //     else
-        //     {
-        //         CollideWithOne(collision);
-        //     }
-        // }
-        // else
-        // {
-        //     CollideWithMultiple(collision);
-        // }
-
-        // Debug.Log("Collided to: " + direction);
     }
 
-
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionExit(Collision other)
     {
-        // if(collision.gameObject.CompareTag("Boundary")){
-        //     Vector3 correctedDirection = GameObject.FindWithTag("Paddle").transform.position - transform.position;
-        //     NormalizeAndSetVelocity(correctedDirection);
-        // }
+        rb.velocity = rb.velocity.normalized * speed;
     }
 
-    private void OnCollisionExit(Collision other) {
-        rb.velocity = rb.velocity.normalized * speed;
+    void LaunchBall()
+    {
+        transform.SetParent(null);
+        rb.isKinematic = false;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rb.AddForce(Vector3.up * speed, ForceMode.VelocityChange);
     }
 
     void CollideWithPaddle(Collision collision)
@@ -81,41 +55,8 @@ public class Ball : MonoBehaviour
         Vector3 collisionPoint = collision.GetContact(0).point;
         float distanceToCentre = paddleCentreX - collisionPoint.x;
 
-        direction = new Vector3(-distanceToCentre * contactMultiplier, 1, 0);
+        Vector3 direction = new Vector3(-distanceToCentre * contactMultiplier, 1, 0);
         NormalizeAndSetVelocity(direction);
-
-        Debug.Log("Collided with paddle");
-    }
-
-    void CollideWithOne(Collision collision)
-    {
-        if(collision.contactCount == 1){
-            direction = Vector3.zero;
-            lastVelocity = -collision.relativeVelocity;
-
-            direction = Vector3.Reflect(lastVelocity, collision.GetContact(0).normal);
-            NormalizeAndSetVelocity(direction);
-
-            Debug.Log("Collided with one");
-        }else{
-            CollideWithMultiple(collision);
-        }
-    }
-
-    void CollideWithMultiple(Collision collision)
-    {
-        direction = Vector3.zero;
-        normalSum = Vector3.zero;
-        lastVelocity = -collision.relativeVelocity;
-
-        for (int i = 0; i < collision.contacts.Length; i++)
-        {
-            normalSum += collision.contacts[i].normal;
-        }
-        direction = normalSum;
-        NormalizeAndSetVelocity(direction);
-
-        Debug.Log("Collided with multiple");
     }
 
     void NormalizeAndSetVelocity(Vector3 direction)

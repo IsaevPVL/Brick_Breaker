@@ -10,6 +10,8 @@ TagManager:
   - Bottom
   - Boundary
   - Direction Change
+  - Touch Manager
+  - Hitter
   layers:
   - Default
   - TransparentFX

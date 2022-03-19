@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -15,8 +13,9 @@ public class TouchManager : MonoBehaviour
     RaycastHit objectTouched;
 
     float positionZ;
-    Vector3 objectPositionAtTouch;
+    public Vector3 objectPositionAtTouch;
     Vector3 objectTouchLocation;
+
     public Vector3 objectTouchOffset;
     public Vector3 currentTouchPosition;
     public bool touchMoved;
@@ -32,27 +31,31 @@ public class TouchManager : MonoBehaviour
         {
             active = this;
         }
+
+        cam = Camera.main;
+        positionZ = GameObject.Find("Paddle").transform.position.z - cam.transform.position.z;
     }
 
-    private void Start()
-    {
-        cam = Camera.main;
-    }
+    // private void Start()
+    // {
+    // }
 
     private void Update()
     {
-        if (!TouchManager.active.Touched())
+        if (Input.touchCount == 0)
         {
             return;
         }
         touch = Input.touches[0];
+        GetTouchPositionInWorldSpace();
 
         if (touch.phase == TouchPhase.Began)
         {
+
             Ray ray = cam.ScreenPointToRay(touch.position);
             if (Physics.Raycast(ray, out objectTouched))
             {
-                positionZ = objectTouched.transform.position.z - cam.transform.position.z;
+                //positionZ = objectTouched.transform.position.z - cam.transform.position.z;
                 objectPositionAtTouch = objectTouched.transform.position;
                 objectTouchLocation = new Vector3(touch.position.x, touch.position.y, positionZ);
                 objectTouchLocation = cam.ScreenToWorldPoint(objectTouchLocation);
@@ -64,11 +67,8 @@ public class TouchManager : MonoBehaviour
 
         if (touch.phase == TouchPhase.Moved)
         {
-            currentTouchPosition =  new Vector3(touch.position.x, touch.position.y, positionZ);
-            currentTouchPosition = cam.ScreenToWorldPoint(currentTouchPosition);
+            GetTouchPositionInWorldSpace();
             touchMoved = true;
-
-
         }
 
         if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended)
@@ -78,25 +78,14 @@ public class TouchManager : MonoBehaviour
         }
     }
 
-    // void ObjectWasTouched(GameObject gameObject){
+    void GetTouchPositionInWorldSpace()
+    {
+        currentTouchPosition = new Vector3(touch.position.x, touch.position.y, positionZ);
+        currentTouchPosition = cam.ScreenToWorldPoint(currentTouchPosition);
+    }
 
+    // public bool Touched()
+    // {
+    //     return (Input.touchCount == 0) ? false : true;
     // }
-
-    public Vector3 GetTouchWorldPosition()
-    {
-        Ray ray = cam.ScreenPointToRay(Input.touches[0].position);
-        if (Physics.Raycast(ray, out RaycastHit raycastHit))
-        {
-            return raycastHit.point;
-        }
-        else
-        {
-            return Vector3.zero;
-        }
-    }
-
-    public bool Touched()
-    {
-        return (Input.touchCount == 0) ? false : true;
-    }
 }

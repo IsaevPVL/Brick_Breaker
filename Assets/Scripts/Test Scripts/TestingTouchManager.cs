@@ -18,9 +18,9 @@ public class TestingTouchManager : MonoBehaviour
         TouchManager.TouchEnded -= TouchEnded;
     }
 
-    private void Awake() {
-        rb = GetComponent<Rigidbody>();
+    private void Start() {
         tm = TouchManager.active;
+        rb = GetComponent<Rigidbody>();
     }
 
     void ThisObject(GameObject obj){

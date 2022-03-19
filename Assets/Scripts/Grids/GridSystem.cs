@@ -1,54 +1,87 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class GridSystem : MonoBehaviour
 {
-    public static GridSystem current;
+    public static GridSystem active;
 
-    public GridLayout gridLayout;
-    Grid grid;
-    [SerializeField] Tilemap mainTilemap;
-    [SerializeField] TileBase whiteTile;
+    Vector3Int cellPosition;
+    Boundaries boundaries;
+    Vector3 bottomLeftCorner;
 
-    public GameObject prefab1;
-    public GameObject prefab2;
+    [Header("Inventory Grid")]
+    public Vector2Int inventoryDimensions;
+    public GridLayout inventoryGridLayout;
+    [Range(0, 0.2f)] public float inventoryHorizontalPadding;
+    [Range(0, 0.2f)] public float inventoryVerticalPadding;
 
-    PlaceableObject objectToPlace;
+    public Vector3 inventoryTopRightCorner;
+    public Vector3 inventoryBottomLeftCorner;
+
+    [Space]
+    [Header("Field Grid")]
+    public Vector2 fieldDimensions;
+    public GridLayout fieldGridLayout;
 
     private void Awake()
     {
-        current = this;
-
-        grid = gridLayout.gameObject.GetComponent<Grid>();
-    }
-
-    public static Vector3 GetTouchWorldPosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.touches[0].position);
-        if (Physics.Raycast(ray, out RaycastHit raycastHit))
+        if (active != null && active != this)
         {
-            return raycastHit.point;
+            Destroy(this);
         }
         else
         {
-            return Vector3.zero;
+            active = this;
         }
+
+        boundaries = GameObject.FindObjectOfType<Boundaries>();
     }
 
-    public Vector3 SnapCordinateToGrid(Vector3 position)
+    private void Start()
     {
-        Vector3Int cellPos = gridLayout.WorldToCell(position);
-        position = grid.GetCellCenterWorld(cellPos);
+        Grid inventoryGrid = inventoryGridLayout.GetComponent<Grid>();
+        //Grid fieldGrid = fieldGridLayout.GetComponent<Grid>();
+
+        bottomLeftCorner = boundaries.corners[3];
+        Vector3 bottomBoundCentre = new Vector3(0, bottomLeftCorner.y, 0);
+        Vector3 closestPaddlePoint = GameObject.FindGameObjectWithTag("Paddle").GetComponent<Rigidbody>().ClosestPointOnBounds(bottomBoundCentre);
+
+        float inventoryWidth = Mathf.Abs(bottomLeftCorner.x) * 2 - boundaries.lineWidth;
+        float inventoryHeight = Mathf.Abs(bottomLeftCorner.y - closestPaddlePoint.y);
+
+        Vector2 padding = new Vector2();
+        padding.x = inventoryWidth * inventoryHorizontalPadding;
+        padding.y = inventoryHeight * inventoryVerticalPadding;
+
+
+        float horizontalSector = (inventoryWidth - padding.x * 2) / inventoryDimensions.x;
+        float verticalSector = (inventoryHeight - padding.y * 2) / inventoryDimensions.y;
+
+        inventoryGrid.cellSize = new Vector3(horizontalSector - inventoryGrid.cellGap.x, verticalSector - inventoryGrid.cellGap.y, 0);
+        transform.position = boundaries.corners[3] + new Vector3(inventoryGridLayout.cellGap.x + padding.x, (inventoryGridLayout.cellGap.y / 2) + padding.y, 0);
+
+        inventoryBottomLeftCorner = transform.position;
+        inventoryBottomLeftCorner.x = inventoryBottomLeftCorner.x - inventoryGridLayout.cellGap.x;
+        inventoryBottomLeftCorner.y = inventoryBottomLeftCorner.y - inventoryGridLayout.cellGap.y;
+        inventoryTopRightCorner = inventoryGridLayout.CellToWorld(new Vector3Int(inventoryDimensions.x, inventoryDimensions.y, 0));
+    }
+
+    public Vector3 SnapCordinateToGrid()
+    {
+        Vector3 position = inventoryGridLayout.CellToWorld(cellPosition) + new Vector3(inventoryGridLayout.cellGap.x / 2, 0, 0);
         return position;
+
+        //position = inventoryGrid.GetCellCenterWorld(cellPosition) + new Vector3((inventoryGrid.cellSize.x ) / 2, -inventoryGrid.cellGap.y / 2, 0);
     }
 
-    public void InitializeWithObject(GameObject prefab){
-        Vector3 position = SnapCordinateToGrid(Vector3.zero);
-
-        GameObject obj = Instantiate(prefab, position, Quaternion.identity);
-        objectToPlace = obj.GetComponent<PlaceableObject>();
-        obj.AddComponent<ObjectDrag>();
+    public bool WithinGridBoundaries(Vector3 position)
+    {
+        cellPosition = inventoryGridLayout.WorldToCell(position);
+        Debug.Log("Cell: " + cellPosition);
+        return (cellPosition.x < inventoryDimensions.x && cellPosition.x >= 0) && (cellPosition.y < inventoryDimensions.y && cellPosition.y >= 0);
     }
+
+    // Vector2 FindInventoryPadding(){
+
+    //     return padding;
+    // }
 }

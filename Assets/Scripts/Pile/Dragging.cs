@@ -124,9 +124,7 @@ public class Dragging : MonoBehaviour
             {
                 desiredDirection = cam.ScreenToWorldPoint(new Vector3(touchPosition.x, touchPosition.y, distanceZ));
 
-                Debug.DrawLine(directionCentre, desiredDirection, Color.magenta);
                 Vector3 ballOffset = ball.transform.position - directionCentre;
-                Debug.DrawLine(ball.transform.position, desiredDirection + ballOffset);
 
                 desiredDirection = (desiredDirection + ballOffset) - ball.transform.position;
 
