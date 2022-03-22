@@ -68,7 +68,6 @@ public class TouchableObject : MonoBehaviour
 
     private IEnumerator DoubleTapCountdown()
     {
-        Debug.Log("coroutine started");
         yield return new WaitForSeconds(0.3f);
         objectTappedOnce = false;
     }

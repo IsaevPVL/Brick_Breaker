@@ -1,8 +1,12 @@
 using UnityEngine;
+using System;
 
 public class GridSystem : MonoBehaviour
-{
+{   
+    public static event Action<Vector2> NewScale;
+
     public static GridSystem active;
+    public Transform element;
 
     Vector3Int cellPosition;
     Boundaries boundaries;
@@ -16,6 +20,8 @@ public class GridSystem : MonoBehaviour
 
     public Vector3 inventoryTopRightCorner;
     public Vector3 inventoryBottomLeftCorner;
+    public float horizontalSector;
+    public float verticalSector;
 
     [Space]
     [Header("Field Grid")]
@@ -53,15 +59,19 @@ public class GridSystem : MonoBehaviour
         padding.y = inventoryHeight * inventoryVerticalPadding;
 
 
-        float horizontalSector = (inventoryWidth - padding.x * 2) / inventoryDimensions.x;
-        float verticalSector = (inventoryHeight - padding.y * 2) / inventoryDimensions.y;
+        horizontalSector = (inventoryWidth - padding.x * 2) / inventoryDimensions.x;
+        verticalSector = (inventoryHeight - padding.y * 2) / inventoryDimensions.y;
+
+        //SCALING TEST
+        //element.localScale = new Vector3(horizontalSector, verticalSector, 0.2f);
+        NewScale?.Invoke(new Vector2(horizontalSector, verticalSector));
 
         inventoryGrid.cellSize = new Vector3(horizontalSector - inventoryGrid.cellGap.x, verticalSector - inventoryGrid.cellGap.y, 0);
-        transform.position = boundaries.corners[3] + new Vector3(inventoryGridLayout.cellGap.x + padding.x, (inventoryGridLayout.cellGap.y / 2) + padding.y, 0);
+        transform.position = boundaries.corners[3] + new Vector3(inventoryGrid.cellGap.x + padding.x, (inventoryGrid.cellGap.y / 2) + padding.y, 0);
 
         inventoryBottomLeftCorner = transform.position;
-        inventoryBottomLeftCorner.x = inventoryBottomLeftCorner.x - inventoryGridLayout.cellGap.x;
-        inventoryBottomLeftCorner.y = inventoryBottomLeftCorner.y - inventoryGridLayout.cellGap.y;
+        //inventoryBottomLeftCorner.x = inventoryBottomLeftCorner.x - inventoryGrid.cellGap.x;
+        //inventoryBottomLeftCorner.y = inventoryBottomLeftCorner.y - inventoryGrid.cellGap.y;
         inventoryTopRightCorner = inventoryGridLayout.CellToWorld(new Vector3Int(inventoryDimensions.x, inventoryDimensions.y, 0));
     }
 
@@ -76,7 +86,7 @@ public class GridSystem : MonoBehaviour
     public bool WithinGridBoundaries(Vector3 position)
     {
         cellPosition = inventoryGridLayout.WorldToCell(position);
-        Debug.Log("Cell: " + cellPosition);
+        //Debug.Log("Cell: " + cellPosition);
         return (cellPosition.x < inventoryDimensions.x && cellPosition.x >= 0) && (cellPosition.y < inventoryDimensions.y && cellPosition.y >= 0);
     }
 

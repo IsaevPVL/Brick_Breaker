@@ -11,8 +11,8 @@ public class PaddleControl : TouchableObject
     public static event Action PaddleDoubleTapped;
 
     //TEMPORARY
-    float widthMin = -5f;
-    float widthMax = 5f;
+    float widthMin = -5.5f;
+    float widthMax = 5.5f;
 
     private void Start()
     {

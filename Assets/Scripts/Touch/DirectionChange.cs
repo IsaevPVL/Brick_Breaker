@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DirectionChange : TouchableObject
+public class DirectionChange : PlaceableObject
 {
     public Ball ball;
     Vector3 desiredDirection;

@@ -9,6 +9,9 @@ public class Ball : MonoBehaviour
     
     public bool isCollidedAfterLaunch = false;
 
+    [Space]
+    public GameObject brickCollision;
+
     private void OnEnable()
     {
         PaddleControl.PaddleDoubleTapped += LaunchBall;
@@ -33,6 +36,12 @@ public class Ball : MonoBehaviour
         if (collision.collider.CompareTag("Hitter"))
         {
             CollideWithPaddle(collision);
+        }
+
+        if(collision.collider.CompareTag("Brick")){
+            ContactPoint contact = collision.contacts[0];
+            GameObject hit = Instantiate(brickCollision, contact.point, Quaternion.FromToRotation(Vector3.up, contact.normal));
+            
         }
     }
 

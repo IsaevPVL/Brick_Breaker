@@ -67,7 +67,6 @@ public class Boundaries : MonoBehaviour
 
         float screenHeight = topLeftCorner.y - bottomLeftCorner.y;
         float screenWidth = topLeftCorner.x - topRightCorner.x;
-        Debug.Log(screenWidth);
 
         float topValue = screenHeight * topOffset;
         float bottomValue = screenHeight * bottomOffset;
