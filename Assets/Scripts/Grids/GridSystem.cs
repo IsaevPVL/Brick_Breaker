@@ -9,7 +9,7 @@ public class GridSystem : MonoBehaviour
     public Transform element;
 
     Vector3Int cellPosition;
-    Boundaries boundaries;
+    public Boundaries boundaries;
     Vector3 bottomLeftCorner;
 
     [Header("Inventory Grid")]
@@ -22,6 +22,7 @@ public class GridSystem : MonoBehaviour
     public Vector3 inventoryBottomLeftCorner;
     public float horizontalSector;
     public float verticalSector;
+    public Vector2 inventoryPadding;
 
     [Space]
     [Header("Field Grid")]
@@ -54,20 +55,20 @@ public class GridSystem : MonoBehaviour
         float inventoryWidth = Mathf.Abs(bottomLeftCorner.x) * 2 - boundaries.lineWidth;
         float inventoryHeight = Mathf.Abs(bottomLeftCorner.y - closestPaddlePoint.y);
 
-        Vector2 padding = new Vector2();
-        padding.x = inventoryWidth * inventoryHorizontalPadding;
-        padding.y = inventoryHeight * inventoryVerticalPadding;
+        inventoryPadding = new Vector2();
+        inventoryPadding.x = inventoryWidth * inventoryHorizontalPadding;
+        inventoryPadding.y = inventoryHeight * inventoryVerticalPadding;
 
 
-        horizontalSector = (inventoryWidth - padding.x * 2) / inventoryDimensions.x;
-        verticalSector = (inventoryHeight - padding.y * 2) / inventoryDimensions.y;
+        horizontalSector = (inventoryWidth - inventoryPadding.x * 2) / inventoryDimensions.x;
+        verticalSector = (inventoryHeight - inventoryPadding.y * 2) / inventoryDimensions.y;
 
         //SCALING TEST
         //element.localScale = new Vector3(horizontalSector, verticalSector, 0.2f);
         NewScale?.Invoke(new Vector2(horizontalSector, verticalSector));
 
         inventoryGrid.cellSize = new Vector3(horizontalSector - inventoryGrid.cellGap.x, verticalSector - inventoryGrid.cellGap.y, 0);
-        transform.position = boundaries.corners[3] + new Vector3(inventoryGrid.cellGap.x + padding.x, (inventoryGrid.cellGap.y / 2) + padding.y, 0);
+        transform.position = boundaries.corners[3] + new Vector3(inventoryGrid.cellGap.x + inventoryPadding.x, (inventoryGrid.cellGap.y / 2) + inventoryPadding.y, 0.3f);
 
         inventoryBottomLeftCorner = transform.position;
         //inventoryBottomLeftCorner.x = inventoryBottomLeftCorner.x - inventoryGrid.cellGap.x;

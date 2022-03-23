@@ -12,6 +12,7 @@ TagManager:
   - Direction Change
   - Touch Manager
   - Hitter
+  - Managers
   layers:
   - Default
   - TransparentFX

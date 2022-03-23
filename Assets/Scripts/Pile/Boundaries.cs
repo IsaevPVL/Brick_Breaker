@@ -8,6 +8,8 @@ public class Boundaries : MonoBehaviour
 
     public float offset = 0.1f;
     public float lineWidth = 0.05f;
+
+    float zOffset;
     [Space]
 
     [Header("Offset in %")]
@@ -31,35 +33,51 @@ public class Boundaries : MonoBehaviour
     private void Awake()
     {
         cam = Camera.main;
-        //FindBoundaries();
-        FindScreenBoundaries();
+        
+        //Visible border
+        float distanceToCamera = GameObject.FindGameObjectWithTag("Managers").transform.position.z - cam.transform.position.z;
+        FindScreenBoundaries(distanceToCamera);
         corners = GetPlayBoundaries();
+        
+        //Colliders on paddle/bricks plane
+        zOffset = GameObject.FindGameObjectWithTag("Paddle").transform.position.z - cam.transform.position.z;
+        FindScreenBoundaries(zOffset);
+        Vector3[] deeperCorners = GetPlayBoundaries();
+        float zWidth = deeperCorners[0].x;
+        float zHeight = deeperCorners[0].y;
+        float zDepth = deeperCorners[0].z;
+        SetCollider(top, new Vector3(0, zHeight, zDepth), new Vector3(Mathf.Abs(zWidth) * 2f, 0, 1));
+        SetCollider(left, new Vector3(zWidth, 0, zDepth), new Vector3(0, Mathf.Abs(zHeight) * 2f, 1));
+        SetCollider(bottom, new Vector3(0, -zHeight, zDepth), new Vector3(Mathf.Abs(zWidth) * 2f, 0, 1));
+        SetCollider(right, new Vector3(-zWidth, 0, zDepth), new Vector3(0, Mathf.Abs(zHeight) * 2f, 1));
 
-        SetLine(top, new Mesh(), corners[0], corners[1]);
-        top.transform.position = new Vector3(top.transform.position.x, height, height);
+        //0 = Top Left, clockwise
+        SetLine(top, corners[0], corners[1]);
+        //top.transform.position = new Vector3(top.transform.position.x, height, -height + zOffset);
 
-        SetLine(right, new Mesh(), corners[1], corners[2]);
-        right.transform.position = new Vector3(-width, right.transform.position.y, -width);
+        SetLine(right, corners[1], corners[2]);
+        //right.transform.position = new Vector3(-width, right.transform.position.y, -width + zOffset);
 
-        LineRenderer bottomLine = SetLine(bottom, new Mesh(), corners[2], corners[3]);
-        bottom.transform.position = new Vector3(bottom.transform.position.x, -height, height);
+        LineRenderer bottomLine = SetLine(bottom, corners[2], corners[3]);
+        //bottom.transform.position = new Vector3(bottom.transform.position.x, -height, height + zOffset);
         // + 10f temporary value to offset from the bottom
         //bottomLine.startColor = Color.red;
         //bottomLine.endColor = Color.red;
 
-        SetLine(left, new Mesh(), corners[3], corners[0]);
-        left.transform.position = new Vector3(width, left.transform.position.y, -width);
+        SetLine(left, corners[3], corners[0]);
+        //left.transform.position = new Vector3(width, left.transform.position.y, -width + zOffset);
 
     }
 
-    void FindScreenBoundaries()
+    void FindScreenBoundaries(float zDistance)
     {
-        float distanceToCamera = GameObject.FindGameObjectWithTag("Paddle").transform.position.z - cam.transform.position.z;
 
-        topLeftCorner = cam.ViewportToWorldPoint(new Vector3(0, 1, distanceToCamera));
-        topRightCorner = cam.ViewportToWorldPoint(new Vector3(1, 1, distanceToCamera));
-        bottomRightCorner = cam.ViewportToWorldPoint(new Vector3(1, 0, distanceToCamera));
-        bottomLeftCorner = cam.ViewportToWorldPoint(new Vector3(0, 0, distanceToCamera));
+        topLeftCorner = cam.ViewportToWorldPoint(new Vector3(0, 1, zDistance));
+
+
+        topRightCorner = cam.ViewportToWorldPoint(new Vector3(1, 1, zDistance));
+        bottomRightCorner = cam.ViewportToWorldPoint(new Vector3(1, 0, zDistance));
+        bottomLeftCorner = cam.ViewportToWorldPoint(new Vector3(0, 0, zDistance));
     }
 
     Vector3[] GetPlayBoundaries(){
@@ -83,7 +101,7 @@ public class Boundaries : MonoBehaviour
         return playBoundaries;
     }
 
-    LineRenderer SetLine(GameObject segment, Mesh mesh, Vector3 startPoint, Vector3 endPoint)
+    LineRenderer SetLine(GameObject segment, Vector3 startPoint, Vector3 endPoint)
     {
         Vector3[] endpoints = new Vector3[] { startPoint, endPoint };
         LineRenderer line = segment.GetComponent<LineRenderer>();
@@ -92,14 +110,20 @@ public class Boundaries : MonoBehaviour
         line.startWidth = lineWidth;
         line.endWidth = lineWidth;
 
-        line.BakeMesh(mesh, false);
-        segment.GetComponent<MeshFilter>().mesh = mesh;
+        // line.BakeMesh(mesh, true);
+        // segment.GetComponent<MeshFilter>().mesh = mesh;
 
-        segment.GetComponent<MeshCollider>().sharedMesh = mesh;
+        // segment.GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        segment.GetComponent<MeshRenderer>().enabled = false;
+        // segment.GetComponent<MeshRenderer>().enabled = false;
 
         return line;
+    }
+
+    void SetCollider(GameObject segment, Vector3 position, Vector3 size){
+        BoxCollider collider = segment.GetComponent<BoxCollider>();
+        collider.center = position;
+        collider.size = size;
     }
 }
 

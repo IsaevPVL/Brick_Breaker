@@ -33,7 +33,7 @@ public class TouchManager : MonoBehaviour
         }
 
         cam = Camera.main;
-        positionZ = GameObject.Find("Paddle").transform.position.z - cam.transform.position.z;
+        //positionZ = GameObject.Find("Paddle").transform.position.z - cam.transform.position.z;
     }
 
     // private void Start()
@@ -55,7 +55,8 @@ public class TouchManager : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(touch.position);
             if (Physics.Raycast(ray, out objectTouched))
             {
-                //positionZ = objectTouched.transform.position.z - cam.transform.position.z;
+                positionZ = objectTouched.transform.position.z - cam.transform.position.z;
+                
                 objectPositionAtTouch = objectTouched.transform.position;
                 objectTouchLocation = new Vector3(touch.position.x, touch.position.y, positionZ);
                 objectTouchLocation = cam.ScreenToWorldPoint(objectTouchLocation);

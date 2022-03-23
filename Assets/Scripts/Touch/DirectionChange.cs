@@ -17,13 +17,8 @@ public class DirectionChange : PlaceableObject
             return;
         }
         primed = true;
-
         desiredDirection = touchPosition;
-
-        Vector3 ballOffset = ball.transform.position - objectPositionAtTouch;
-
+        Vector3 ballOffset = ball.transform.position - objectPositionAtTouch + objectTouchOffset;
         desiredDirection = (desiredDirection + ballOffset) - ball.transform.position;
-
     }
-
 }

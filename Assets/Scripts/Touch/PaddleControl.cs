@@ -4,6 +4,7 @@ using System;
 public class PaddleControl : TouchableObject
 {
     Rigidbody rb;
+    bool gotBall = true;
 
     [SerializeField, Range(0, 1)] float timeScaleMultiplyer = 0.2f;
     float fixedDeltaTime;
@@ -14,10 +15,26 @@ public class PaddleControl : TouchableObject
     float widthMin = -5.5f;
     float widthMax = 5.5f;
 
+    //private void OnEnable()
+    // {
+    //   TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
+    //  }
+
+    // private void OnDisable()
+    // {
+    //     TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
+    // }
+
+    private void OnDestroy() {
+        TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
+    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         fixedDeltaTime = Time.fixedDeltaTime;
+
+        TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
     }
 
     private void Update()
@@ -35,17 +52,27 @@ public class PaddleControl : TouchableObject
 
         rb.MovePosition(moveTo);
 
-        if (objectDoubleTapped)
-        {
-            Debug.Log(name + " double tapped");
-            PaddleDoubleTapped?.Invoke();
-            objectDoubleTapped = false;
-        }
+        // if (objectDoubleTapped)
+        // {
+        //     Debug.Log(name + " double tapped");
+        //     PaddleDoubleTapped?.Invoke();
+        //     objectDoubleTapped = false;
+        // }
+
     }
 
     void SetTimeScale(float scale)
     {
         Time.timeScale = scale;
         Time.fixedDeltaTime = fixedDeltaTime * Time.timeScale;
+    }
+
+    void GotTwoTaps(string obj)
+    {
+        if (gotBall && obj == "Paddle")
+        {
+            PaddleDoubleTapped?.Invoke();
+            gotBall = false;
+        }
     }
 }

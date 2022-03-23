@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class PlaceableObject : TouchableObject
 {
@@ -8,7 +9,7 @@ public class PlaceableObject : TouchableObject
     public Transform visual;
     public GameObject text;
 
-    // private void OnEnable()
+    // IEnumerator OnEnable()
     // {
     //     GridSystem.NewScale += NewScale;
     // }
@@ -16,7 +17,9 @@ public class PlaceableObject : TouchableObject
     // {
     //     GridSystem.NewScale -= NewScale;
     // }
-    IEnumerator Start() {
+
+    IEnumerator Start()
+    {
         yield return new WaitForSecondsRealtime(0.1f);
         NewScale(new Vector2(GridSystem.active.horizontalSector, GridSystem.active.verticalSector));
 
@@ -36,16 +39,19 @@ public class PlaceableObject : TouchableObject
         }
     }
 
-    void NewScale(Vector2 scale){
+    void NewScale(Vector2 scale)
+    {
         BoxCollider box = this.gameObject.AddComponent<BoxCollider>();
         box.size = new Vector3(scale.x, scale.y, 0.2f);
         box.center = new Vector3(scale.x / 2, scale.y / 2, -0.1f);
 
-        if(visual != null){
+        if (visual != null)
+        {
             visual.localScale = new Vector3(scale.x, scale.y, 0.2f);
         }
 
-        if(text != null){
+        if (text != null)
+        {
             //text.GetComponent<RectTransform>().position = transform.position;
             //Debug.Log(text.GetComponent<RectTransform>().rect);
             text.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, scale.x);
