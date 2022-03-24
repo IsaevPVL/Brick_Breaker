@@ -5,8 +5,12 @@ using DG.Tweening;
 public class MenuBackground : MonoBehaviour
 {
     public GameObject background;
+    public GameObject buttons;
     [Range(0, 1)] public float topPadding;
+    [Range(0, 1)] public float openTime = 0.3f;
+    [Range(0, 1)] public float closeTime = 0.3f;
     public bool isOpen = false;
+
 
     GridSystem gridSystem;
     Vector3 defaultScale;
@@ -28,15 +32,16 @@ public class MenuBackground : MonoBehaviour
 
         transform.position = GridSystem.active.inventoryGridLayout.CellToWorld(new Vector3Int(0, 1, 0));
 
-        defaultScale = background.transform.localScale;
         gridSystem = GridSystem.active;
         topRightCorner = gridSystem.boundaries.corners[1];
 
         topRightCorner.x = gridSystem.inventoryTopRightCorner.x;
         topRightCorner.y *= topPadding;
         topRightCorner.z = 1;
-
         topRightCorner -= transform.position;
+
+        background.transform.localScale = new Vector3(topRightCorner.x, 0.01f, 1);
+        defaultScale = background.transform.localScale;
 
     }
 
@@ -47,12 +52,16 @@ public class MenuBackground : MonoBehaviour
             if (isOpen == false)
             {
                 isOpen = true;
-                background.transform.DOScale(topRightCorner, 0.5f);
+                background.transform.DOScale(topRightCorner, openTime);
+                buttons.SetActive(true);
+                //Time.fixedDeltaTime = 0;
                 return;
             }
 
             isOpen = false;
-            background.transform.DOScale(defaultScale, 0.5f);
+            background.transform.DOScale(defaultScale, closeTime);
+            buttons.SetActive(false);
+            //Time.fixedDeltaTime = 1;
         }
     }
 }

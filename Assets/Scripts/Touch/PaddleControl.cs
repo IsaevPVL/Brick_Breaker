@@ -25,8 +25,10 @@ public class PaddleControl : TouchableObject
     //     TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
     // }
 
-    private void OnDestroy() {
+    private void OnDestroy()
+    {
         TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
+        SetTimeScale(1);
     }
 
     private void Start()
@@ -41,10 +43,16 @@ public class PaddleControl : TouchableObject
     {
         if (!isTouched)
         {
-            SetTimeScale(timeScaleMultiplyer);
+            if (Time.timeScale != timeScaleMultiplyer && Time.timeScale != 0)
+            {
+                SetTimeScale(timeScaleMultiplyer);
+            }
             return;
         }
-        SetTimeScale(1);
+        if (Time.timeScale != 1)
+        {
+            SetTimeScale(1);
+        }
 
         float boundX = Mathf.Clamp(touchPosition.x, widthMin, widthMax);
 
