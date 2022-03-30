@@ -3,7 +3,7 @@ using DG.Tweening;
 
 public class FastForward : MonoBehaviour
 {
-    [SerializeField, Range(1, 10)] float fastForwardMultiplier = 1.5f;
+    [SerializeField, Range(1, 100)] float fastForwardMultiplier = 1.5f;
     [SerializeField] GameObject image;
     bool fastForwarding = false;
     Vector3 defaultPosition;

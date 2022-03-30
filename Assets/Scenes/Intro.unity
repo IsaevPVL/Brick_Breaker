@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8741fb58cc08ee0438e0293658d16f25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fastForwardMultiplier: 7
+  fastForwardMultiplier: 50
   image: {fileID: 1128797087}
 --- !u!4 &51189359
 Transform:

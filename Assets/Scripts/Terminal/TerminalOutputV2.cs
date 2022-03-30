@@ -78,7 +78,7 @@ public class TerminalOutputV2 : MonoBehaviour
         // AddLine("This is a test 8", true);
     }
 
-    void AddLine(string line, bool displayImmediately = false)
+    IEnumerator AddLine(string line, bool displayImmediately = false)
     {
         linesToDisplay.Enqueue(line);
 
@@ -88,15 +88,15 @@ public class TerminalOutputV2 : MonoBehaviour
         }
 
         if (displayImmediately)
-            DisplayLines(linesToDisplay);
+            yield return StartCoroutine(DisplayLines(linesToDisplay));
     }
 
-    void DisplayLines(Queue<string> lines)
+    IEnumerator DisplayLines(Queue<string> lines)
     {
-        if (currentlyPrinting != null)
-        {
-            StopCoroutine(currentlyPrinting);
-        }
+        // if (currentlyPrinting != null)
+        // {
+        //     StopCoroutine(currentlyPrinting);
+        // }
         StopRunningCursor(typingDelay);
 
         Queue<string> temp = new Queue<string>(lines);
@@ -110,7 +110,8 @@ public class TerminalOutputV2 : MonoBehaviour
         screen.text = presentLines;
 
         finalLine += temp.Dequeue();
-        currentlyPrinting = StartCoroutine(PrintLastLine(finalLine, characterDelay));
+        //currentlyPrinting = StartCoroutine(PrintLastLine(finalLine, characterDelay));
+        yield return StartCoroutine(PrintLastLine(finalLine, characterDelay));
 
     }
 
@@ -181,56 +182,56 @@ public class TerminalOutputV2 : MonoBehaviour
     {
         //AddLine("");
         yield return new WaitForSeconds(1.5f);
-        AddLine("Software provided by: \n", true);
+        yield return StartCoroutine(AddLine("Software created by: \n", true));
         yield return new WaitForSeconds(2);
-        AddLine("<size=18> .d8888b.                         888      d8b          888 d8b          d8b 888             888 ");
-        AddLine("d88P  Y88b                        888      Y8P          888 Y8P          Y8P 888             888 ");
-        AddLine("Y88b.                             888                   888                  888             888 ");
-        AddLine(" \"Y888b.   88888b.d88b.   .d88b.  888  888 888      .d88888 888  .d88b.  888 888888  8888b.  888 ");
-        AddLine("    \"Y88b. 888 \"888 \"88b d88\"\"88b 888 .88P 888     d88\" 888 888 d88P\"88b 888 888        \"88b 888");
-        AddLine("      \"888 888  888  888 888  888 888888K  888     888  888 888 888  888 888 888    .d888888 888 ");
-        AddLine("Y88b  d88P 888  888  888 Y88..88P 888 \"88b 888 d8b Y88b 888 888 Y88b 888 888 Y88b.  888  888 888 ");
-        AddLine(" \"Y8888P\"  888  888  888  \"Y88P\"  888  888 888 Y8P  \"Y88888 888  \"Y88888 888  \"Y888 \"Y888888 888 ");
-        AddLine("                                                                     888                         ");
-        AddLine("                                                                Y8b d88P                         ");
-        AddLine("                                                                 \"Y88P\"                          ");
-        AddLine("", true);
+        yield return StartCoroutine(AddLine("<size=18> .d8888b.                         888      d8b          888 d8b          d8b 888             888 "));
+        yield return StartCoroutine(AddLine("d88P  Y88b                        888      Y8P          888 Y8P          Y8P 888             888 "));
+        yield return StartCoroutine(AddLine("Y88b.                             888                   888                  888             888 "));
+        yield return StartCoroutine(AddLine(" \"Y888b.   88888b.d88b.   .d88b.  888  888 888      .d88888 888  .d88b.  888 888888  8888b.  888 "));
+        yield return StartCoroutine(AddLine("    \"Y88b. 888 \"888 \"88b d88\"\"88b 888 .88P 888     d88\" 888 888 d88P\"88b 888 888        \"88b 888"));
+        yield return StartCoroutine(AddLine("      \"888 888  888  888 888  888 888888K  888     888  888 888 888  888 888 888    .d888888 888 "));
+        yield return StartCoroutine(AddLine("Y88b  d88P 888  888  888 Y88..88P 888 \"88b 888 d8b Y88b 888 888 Y88b 888 888 Y88b.  888  888 888 "));
+        yield return StartCoroutine(AddLine(" \"Y8888P\"  888  888  888  \"Y88P\"  888  888 888 Y8P  \"Y88888 888  \"Y88888 888  \"Y888 \"Y888888 888 "));
+        yield return StartCoroutine(AddLine("                                                                     888                         "));
+        yield return StartCoroutine(AddLine("                                                                Y8b d88P                         "));
+        yield return StartCoroutine(AddLine("                                                                 \"Y88P\"                          "));
+        yield return StartCoroutine(AddLine("", true));
         yield return new WaitForSeconds(1);
-        AddLine("</size><align=\"right\">");
-        AddLine("2022", true);
-        yield return new WaitForSeconds(0.5f);
-        AddLine("rev 1.0", true);
-        AddLine("</align>\n");
-        yield return new WaitForSeconds(2);
-        AddLine("init.Login_proc()...", true);
+        yield return StartCoroutine(AddLine("</size><align=\"right\">"));
+        yield return StartCoroutine(AddLine("2022", true));
+        //yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(AddLine("rev 1.0.0", true));
+        yield return StartCoroutine(AddLine("</align>\n"));
+        yield return new WaitForSeconds(1);
+        yield return StartCoroutine(AddLine("init.Login_proc()...", true));
         yield return new WaitForSeconds(1f);
-        AddLine("Login: user", true);
+        yield return StartCoroutine(AddLine("Login: user", true));
         yield return new WaitForSeconds(0.5f);
-        AddLine("Password: ************", true);
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(AddLine("Password: ************", true));
+        // yield return new WaitForSeconds(1.5f);
         screen.text += "\n";
-        yield return StartCoroutine(TypeOK(3, 0.7f)); AddLine("... ok");
+        yield return StartCoroutine(TypeOK(3, 0.7f)); yield return StartCoroutine(AddLine("... ok"));
         yield return new WaitForSeconds(1);
-        AddLine("starting visualisation server", true);
-        yield return new WaitForSeconds(2);
-        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// polygon_levels")); AddLine("   -// polygon_levels...... ok");
-        yield return new WaitForSeconds(1);
-        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// shader_temps")); AddLine("   -// shader_temps...... ok");
-        yield return new WaitForSeconds(1);
-        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// map_normalisation")); AddLine("   -// map_normalisation...... ok");
-        yield return new WaitForSeconds(1);
-        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// audio_out")); AddLine("   -// audio_out...... ok");
-        yield return new WaitForSeconds(1);
+        yield return StartCoroutine(AddLine("starting visualisation server", true));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// polygon_levels")); yield return StartCoroutine(AddLine("   -// polygon_levels...... ok"));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// shader_temps")); yield return StartCoroutine(AddLine("   -// shader_temps...... ok"));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// map_normalisation")); yield return StartCoroutine(AddLine("   -// map_normalisation...... ok"));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(TypeOK(6, 0.05f, "   -// audio_out")); yield return StartCoroutine(AddLine("   -// audio_out...... ok"));
+        yield return new WaitForSeconds(0.5f);
         for (int i = 0; i < 10; i++)
         {
-            AddLine(".", true);
-            yield return new WaitForSeconds(.35f);
+            yield return StartCoroutine(AddLine(".", true));
+            yield return new WaitForSeconds(.25f);
         }
         yield return new WaitForSeconds(1f);
         characterDelay = 0.08f;
-        AddLine("You're in", true);
+        yield return StartCoroutine(AddLine("You're in", true));
         StartCoroutine(RunningCursor());
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(3.25f);
         StartCoroutine(CaptureFrame());
         SceneManager.LoadSceneAsync(1);
         // SceneManager.SetActiveScene(SceneManager.GetSceneAt(1));

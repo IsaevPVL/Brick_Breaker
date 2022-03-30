@@ -12,7 +12,7 @@ public class MenuBackground : MonoBehaviour
     public bool isOpen = false;
 
 
-    GridSystem gridSystem;
+    InventoryGrid gridSystem;
     Vector3 defaultScale;
     Vector3 topRightCorner;
 
@@ -30,9 +30,9 @@ public class MenuBackground : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(.1f);
 
-        transform.position = GridSystem.active.inventoryGridLayout.CellToWorld(new Vector3Int(0, 1, 0));
+        transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(new Vector3Int(0, 1, 0));
 
-        gridSystem = GridSystem.active;
+        gridSystem = InventoryGrid.active;
         topRightCorner = gridSystem.boundaries.corners[1];
 
         topRightCorner.x = gridSystem.inventoryTopRightCorner.x;

@@ -1,11 +1,11 @@
 using UnityEngine;
 using System;
 
-public class GridSystem : MonoBehaviour
+public class InventoryGrid : MonoBehaviour
 {   
     public static event Action<Vector2> NewScale;
 
-    public static GridSystem active;
+    public static InventoryGrid active;
     public Transform element;
 
     Vector3Int cellPosition;
@@ -23,11 +23,6 @@ public class GridSystem : MonoBehaviour
     public float horizontalSector;
     public float verticalSector;
     public Vector2 inventoryPadding;
-
-    [Space]
-    [Header("Field Grid")]
-    public Vector2 fieldDimensions;
-    public GridLayout fieldGridLayout;
 
     private void Awake()
     {
@@ -90,9 +85,4 @@ public class GridSystem : MonoBehaviour
         //Debug.Log("Cell: " + cellPosition);
         return (cellPosition.x < inventoryDimensions.x && cellPosition.x >= 0) && (cellPosition.y < inventoryDimensions.y && cellPosition.y >= 0);
     }
-
-    // Vector2 FindInventoryPadding(){
-
-    //     return padding;
-    // }
 }

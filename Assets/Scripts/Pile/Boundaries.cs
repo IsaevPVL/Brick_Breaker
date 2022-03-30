@@ -29,6 +29,7 @@ public class Boundaries : MonoBehaviour
     public Vector3 bottomLeftCorner;
 
     public Vector3[] corners = new Vector3[4];
+    public Vector3[] deeperCorners = new Vector3[4];
 
     private void Awake()
     {
@@ -42,7 +43,7 @@ public class Boundaries : MonoBehaviour
         //Colliders on paddle/bricks plane
         zOffset = GameObject.FindGameObjectWithTag("Paddle").transform.position.z - cam.transform.position.z;
         FindScreenBoundaries(zOffset);
-        Vector3[] deeperCorners = GetPlayBoundaries();
+        deeperCorners = GetPlayBoundaries();
         float zWidth = deeperCorners[0].x;
         float zHeight = deeperCorners[0].y;
         float zDepth = deeperCorners[0].z;

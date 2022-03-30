@@ -37,7 +37,7 @@ public class BrickGrid : MonoBehaviour
                 //Debug.Log(i + " " + j);
 
                 GameObject currentBrick = Instantiate(brick, GetCellPosition(w, h), Quaternion.identity, grid.transform);
-                currentBrick.GetComponent<Brick>().health = Random.Range(1, 4);
+                //currentBrick.GetComponent<Brick>().health = Random.Range(1, 4);
             }
         }
     }

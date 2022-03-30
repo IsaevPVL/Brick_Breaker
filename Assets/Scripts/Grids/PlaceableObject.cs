@@ -11,19 +11,19 @@ public class PlaceableObject : TouchableObject
 
     // IEnumerator OnEnable()
     // {
-    //     GridSystem.NewScale += NewScale;
+    //     InventoryGrid.NewScale += NewScale;
     // }
     // private void OnDisable()
     // {
-    //     GridSystem.NewScale -= NewScale;
+    //     InventoryGrid.NewScale -= NewScale;
     // }
 
     IEnumerator Start()
     {
         yield return new WaitForSecondsRealtime(0.1f);
-        NewScale(new Vector2(GridSystem.active.horizontalSector, GridSystem.active.verticalSector));
+        NewScale(new Vector2(InventoryGrid.active.horizontalSector, InventoryGrid.active.verticalSector));
 
-        transform.position = GridSystem.active.inventoryGridLayout.CellToWorld(defaultCell);
+        transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(defaultCell);
     }
 
     private void Update()
@@ -33,9 +33,9 @@ public class PlaceableObject : TouchableObject
             return;
         }
 
-        if (isUnlocked && GridSystem.active.WithinGridBoundaries(touchPosition + objectTouchOffset))
+        if (isUnlocked && InventoryGrid.active.WithinGridBoundaries(touchPosition + objectTouchOffset))
         {
-            transform.position = GridSystem.active.SnapCordinateToGrid();
+            transform.position = InventoryGrid.active.SnapCordinateToGrid();
         }
     }
 

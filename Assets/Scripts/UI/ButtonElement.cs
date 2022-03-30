@@ -29,7 +29,7 @@ public class ButtonElement : TouchableObject
         {
             
             //SceneManager.MergeScenes(SceneManager.GetActiveScene(), SceneManager.CreateScene(Time.time.ToString()));
-            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+            SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
         }
     }
 }

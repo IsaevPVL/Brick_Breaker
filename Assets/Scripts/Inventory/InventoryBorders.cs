@@ -10,7 +10,7 @@ public class InventoryBorders : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(0.1f); //CHANGE!!!?
 
-        GridSystem grid = GridSystem.active;
+        InventoryGrid grid = InventoryGrid.active;
 
         Vector3 bottomLeftCorner = grid.inventoryBottomLeftCorner;
         Vector3 topRightCorner = grid.inventoryTopRightCorner;

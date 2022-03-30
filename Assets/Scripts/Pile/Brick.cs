@@ -10,6 +10,8 @@ public class Brick : MonoBehaviour
 
     private void Awake() {
         meshRenderer = GetComponent<Renderer>();
+
+        health = Random.Range(1, 4);
     }
 
     private void OnCollisionEnter(Collision other) {
