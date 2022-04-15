@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 
+//[ExecuteInEditMode]
 public class InventoryGrid : MonoBehaviour
 {   
     public static event Action<Vector2> NewScale;

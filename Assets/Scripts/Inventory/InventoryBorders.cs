@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+//[ExecuteInEditMode]
 public class InventoryBorders : MonoBehaviour
 {
     public float lineWidth = 0.05f;

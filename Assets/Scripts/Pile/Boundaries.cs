@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//[ExecuteInEditMode]
 public class Boundaries : MonoBehaviour
 {
     Camera cam;
@@ -55,27 +56,17 @@ public class Boundaries : MonoBehaviour
         //0 = Top Left, clockwise
         SetLine(top, corners[0], corners[1]);
         //top.transform.position = new Vector3(top.transform.position.x, height, -height + zOffset);
-
         SetLine(right, corners[1], corners[2]);
         //right.transform.position = new Vector3(-width, right.transform.position.y, -width + zOffset);
-
-        LineRenderer bottomLine = SetLine(bottom, corners[2], corners[3]);
+        SetLine(bottom, corners[2], corners[3]);
         //bottom.transform.position = new Vector3(bottom.transform.position.x, -height, height + zOffset);
-        // + 10f temporary value to offset from the bottom
-        //bottomLine.startColor = Color.red;
-        //bottomLine.endColor = Color.red;
-
         SetLine(left, corners[3], corners[0]);
         //left.transform.position = new Vector3(width, left.transform.position.y, -width + zOffset);
-
     }
 
     void FindScreenBoundaries(float zDistance)
     {
-
         topLeftCorner = cam.ViewportToWorldPoint(new Vector3(0, 1, zDistance));
-
-
         topRightCorner = cam.ViewportToWorldPoint(new Vector3(1, 1, zDistance));
         bottomRightCorner = cam.ViewportToWorldPoint(new Vector3(1, 0, zDistance));
         bottomLeftCorner = cam.ViewportToWorldPoint(new Vector3(0, 0, zDistance));

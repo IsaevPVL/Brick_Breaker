@@ -2,12 +2,14 @@ using UnityEngine;
 using System.Collections;
 using System;
 
+//[ExecuteInEditMode]
 public class PlaceableObject : TouchableObject
 {
     public Vector3Int defaultCell;
     public bool isUnlocked = true;
     public Transform visual;
     public GameObject text;
+    public Vector2Int dimensions;
 
     // IEnumerator OnEnable()
     // {
@@ -21,7 +23,7 @@ public class PlaceableObject : TouchableObject
     IEnumerator Start()
     {
         yield return new WaitForSecondsRealtime(0.1f);
-        NewScale(new Vector2(InventoryGrid.active.horizontalSector, InventoryGrid.active.verticalSector));
+        NewScale(new Vector2(InventoryGrid.active.horizontalSector * dimensions.x, InventoryGrid.active.verticalSector * dimensions.y));
 
         transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(defaultCell);
     }

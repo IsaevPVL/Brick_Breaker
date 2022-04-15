@@ -181,9 +181,9 @@ public class TerminalOutputV2 : MonoBehaviour
     IEnumerator Intro()
     {
         //AddLine("");
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(AddLine("Software created by: \n", true));
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         yield return StartCoroutine(AddLine("<size=18> .d8888b.                         888      d8b          888 d8b          d8b 888             888 "));
         yield return StartCoroutine(AddLine("d88P  Y88b                        888      Y8P          888 Y8P          Y8P 888             888 "));
         yield return StartCoroutine(AddLine("Y88b.                             888                   888                  888             888 "));

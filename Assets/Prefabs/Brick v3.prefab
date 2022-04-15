@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -6860397845091931341}
   m_Layer: 0
   m_Name: Brick v3
-  m_TagString: Untagged
+  m_TagString: Brick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,8 +132,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6586728947021608040}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 329a7ec19499dea44a9e11a07de288e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tapWindow: 0.1
+  canBeDoubleTapped: 0
+  defaultCell: {x: 0, y: 0, z: 0}
+  isUnlocked: 1
+  visual: {fileID: 0}
+  text: {fileID: 0}
+  dimensions: {x: 0, y: 0}

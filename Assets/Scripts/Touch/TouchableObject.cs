@@ -46,7 +46,7 @@ public class TouchableObject : MonoBehaviour
             tapDuration += Time.deltaTime;
             if (!isHeld && tapDuration > 0.2f)
             {
-                Debug.Log(this.name + " is held");
+                //Debug.Log(this.name + " is held");
                 StopCoroutine(TapsCountdown());
                 numberOfTaps = 0;
                 isHeld = true;
@@ -74,7 +74,7 @@ public class TouchableObject : MonoBehaviour
             {
                 StopCoroutine(TapsCountdown());
                 ObjectWasDoubleTapped?.Invoke(this.name);
-                Debug.Log(this.name + " is doubletapped");
+                //Debug.Log(this.name + " is doubletapped");
                 numberOfTaps = 0;
             }
         }
@@ -102,7 +102,7 @@ public class TouchableObject : MonoBehaviour
     void Tapped()
     {
         ObjectWasTapped?.Invoke(this.name);
-        Debug.Log(this.name + " is tapped");
+        //Debug.Log(this.name + " is tapped");
         numberOfTaps = 0;
     }
 

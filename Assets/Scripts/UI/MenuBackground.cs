@@ -30,7 +30,7 @@ public class MenuBackground : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(.1f);
 
-        transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(new Vector3Int(0, 1, 0));
+        transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(new Vector3Int(0, 2, 0));
 
         gridSystem = InventoryGrid.active;
         topRightCorner = gridSystem.boundaries.corners[1];
