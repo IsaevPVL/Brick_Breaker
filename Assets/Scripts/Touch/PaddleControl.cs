@@ -12,8 +12,7 @@ public class PaddleControl : TouchableObject
     public static event Action PaddleDoubleTapped;
 
     //TEMPORARY
-    float widthMin = -5.5f;
-    float widthMax = 5.5f;
+    public float maxAllowedWidth;
     Boundaries boundaries;
 
     //private void OnEnable()
@@ -41,8 +40,7 @@ public class PaddleControl : TouchableObject
 
         float paddleWidth = GameObject.FindGameObjectWithTag("Hitter").GetComponent<MeshCollider>().bounds.extents.x;
         boundaries = GameObject.FindObjectOfType<Boundaries>();
-        widthMin = boundaries.corners[0].x + paddleWidth;
-        widthMax = boundaries.corners[1].x - paddleWidth;
+        maxAllowedWidth = boundaries.corners[1].x - paddleWidth;
     }
 
     private void Update()
@@ -60,7 +58,7 @@ public class PaddleControl : TouchableObject
             SetTimeScale(1);
         }
 
-        float boundX = Mathf.Clamp(touchPosition.x + objectTouchOffset.x, widthMin, widthMax);
+        float boundX = Mathf.Clamp(touchPosition.x + objectTouchOffset.x, -maxAllowedWidth, maxAllowedWidth);
 
         //Vector3 moveTo = new Vector3(boundX, objectDefaultPosition.y, objectDefaultPosition.z) + new Vector3(objectTouchOffset.x, 0f, 0f);
         Vector3 moveTo = new Vector3(boundX, objectDefaultPosition.y, objectDefaultPosition.z);

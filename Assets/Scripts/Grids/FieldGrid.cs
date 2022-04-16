@@ -52,6 +52,10 @@ public class FieldGrid : MonoBehaviour
         fieldPadding.y = fieldHeight * verticalPadding;
         transform.position = new Vector3(-topRightCorner.x + fieldPadding.x, paddlePosition.y + (topRightCorner.y - paddlePosition.y) * freeSpace - fieldPadding.y, paddlePosition.z);
 
+        //Fill grid with simple blocks
+        CalculateScaleWithDimensions(fieldDimensions.x, fieldDimensions.y);
+        FillGrid(scale);
+
     }
 
     void CalculateScaleWithDimensions(int xDimension, int yDimension){

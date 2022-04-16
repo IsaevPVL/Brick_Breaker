@@ -28,6 +28,7 @@ public class TerminalOutputV2 : MonoBehaviour
     [Space]
     [Header("Typing Effect")]
     public float characterDelay = 0.02f;
+    public float fastForwardMultiplier = 1f;
     Coroutine currentlyPrinting;
 
     TextMeshProUGUI screen;
@@ -181,9 +182,9 @@ public class TerminalOutputV2 : MonoBehaviour
     IEnumerator Intro()
     {
         //AddLine("");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("Software created by: \n", true));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1 * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("<size=18> .d8888b.                         888      d8b          888 d8b          d8b 888             888 "));
         yield return StartCoroutine(AddLine("d88P  Y88b                        888      Y8P          888 Y8P          Y8P 888             888 "));
         yield return StartCoroutine(AddLine("Y88b.                             888                   888                  888             888 "));
@@ -196,44 +197,44 @@ public class TerminalOutputV2 : MonoBehaviour
         yield return StartCoroutine(AddLine("                                                                Y8b d88P                         "));
         yield return StartCoroutine(AddLine("                                                                 \"Y88P\"                          "));
         yield return StartCoroutine(AddLine("", true));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1 * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("</size><align=\"right\">"));
         yield return StartCoroutine(AddLine("2022", true));
         //yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(AddLine("rev 1.0.0", true));
         yield return StartCoroutine(AddLine("</align>\n"));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1 * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("init.Login_proc()...", true));
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1 * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("Login: user", true));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("Password: ************", true));
         // yield return new WaitForSeconds(1.5f);
         screen.text += "\n";
         yield return StartCoroutine(TypeOK(3, 0.7f)); yield return StartCoroutine(AddLine("... ok"));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1 * fastForwardMultiplier);
         yield return StartCoroutine(AddLine("starting visualisation server", true));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         yield return StartCoroutine(TypeOK(6, 0.05f, "   -// polygon_levels")); yield return StartCoroutine(AddLine("   -// polygon_levels...... ok"));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         yield return StartCoroutine(TypeOK(6, 0.05f, "   -// shader_temps")); yield return StartCoroutine(AddLine("   -// shader_temps...... ok"));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         yield return StartCoroutine(TypeOK(6, 0.05f, "   -// map_normalisation")); yield return StartCoroutine(AddLine("   -// map_normalisation...... ok"));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         yield return StartCoroutine(TypeOK(6, 0.05f, "   -// audio_out")); yield return StartCoroutine(AddLine("   -// audio_out...... ok"));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * fastForwardMultiplier);
         for (int i = 0; i < 10; i++)
         {
             yield return StartCoroutine(AddLine(".", true));
-            yield return new WaitForSeconds(.25f);
+            yield return new WaitForSeconds(.25f * fastForwardMultiplier);
         }
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1 * fastForwardMultiplier);
         characterDelay = 0.08f;
         yield return StartCoroutine(AddLine("You're in", true));
         StartCoroutine(RunningCursor());
         yield return new WaitForSeconds(3.25f);
         StartCoroutine(CaptureFrame());
-        SceneManager.LoadSceneAsync(1);
+        StartGame();
         // SceneManager.SetActiveScene(SceneManager.GetSceneAt(1));
         // SceneManager.UnloadSceneAsync(0);
 
@@ -254,17 +255,21 @@ public class TerminalOutputV2 : MonoBehaviour
         for (int i = 0; i < dots; i++)
         {
             screen.text += ".";
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(delay * fastForwardMultiplier);
         }
         screen.text += " ";
         screen.text += "o";
-        yield return new WaitForSeconds(0.04f);
+        yield return new WaitForSeconds(0.04f * fastForwardMultiplier);
         screen.text += "k";
     }
 
     IEnumerator CaptureFrame(){
         yield return new WaitForEndOfFrame();
         FrameCaptured?.Invoke(ScreenCapture.CaptureScreenshotAsTexture());
+    }
+
+    public void StartGame(){
+        SceneManager.LoadSceneAsync(1);
     }
 }
 

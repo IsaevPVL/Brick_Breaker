@@ -1,12 +1,25 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class FastForward : MonoBehaviour
 {
-    [SerializeField, Range(1, 100)] float fastForwardMultiplier = 1.5f;
-    [SerializeField] GameObject image;
+    //[SerializeField, Range(1, 100)] float fastForwardMultiplier = 1.5f;
+    [SerializeField, Range(0, 10)] float skipDelay = 2f;
+    [SerializeField] GameObject imageFastForward;
+    [SerializeField] Image imageProgress;
+    [SerializeField] GameObject instructions;
     bool fastForwarding = false;
     Vector3 defaultPosition;
+
+    TerminalOutputV2 output;
+
+    private void Start() {
+        output = FindObjectOfType<TerminalOutputV2>();
+        imageProgress.fillAmount = 0f;
+        imageFastForward.SetActive(false);
+        instructions.SetActive(false);
+    }
 
     private void Update()
     {
@@ -15,13 +28,22 @@ public class FastForward : MonoBehaviour
 
             if (fastForwarding)
             {
+                imageProgress.fillAmount += 1f / skipDelay * Time.deltaTime;
+
+                if(imageProgress.fillAmount == 1f){
+                    output.StartGame();
+                }
+
                 return;
             }
             fastForwarding = true;
-            Time.timeScale = fastForwardMultiplier;
-            image.SetActive(true);
-            image.GetComponent<RectTransform>().DOPivotX(1.2f, 0.2f).SetLoops(-1, LoopType.Yoyo);
-            
+            //Time.timeScale = fastForwardMultiplier;
+            //output.characterDelay = 0;
+            //output.fastForwardMultiplier = 0;
+            //imageFastForward.SetActive(true);
+            //imageFastForward.GetComponent<RectTransform>().DOPivotX(1.2f, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            instructions.SetActive(true);
+            instructions.GetComponent<RectTransform>().DOPivotX(1.2f, 0.3f).SetLoops(-1, LoopType.Yoyo);
         }
         else
         {
@@ -30,21 +52,26 @@ public class FastForward : MonoBehaviour
                 return;
             }
             fastForwarding = false;
-            Time.timeScale = 1;
-            image.transform.DORewind(false);
-            image.SetActive(false);
+            //Time.timeScale = 1;
+            //output.characterDelay = 0.02f;
+            //output.fastForwardMultiplier = 1;
+            //imageFastForward.transform.DORewind(false);
+            //imageFastForward.SetActive(false);
+            instructions.transform.DORewind(false);
+            instructions.SetActive(false);
+            imageProgress.fillAmount = 0f;
         }
     }
 
     // private void OnDisable()
     // {
     //     Time.timeScale = 1;
-    //     image.transform.DOKill(false);
+    //     imageFastForward.transform.DOKill(false);
     // }
 
     private void OnDestroy()
     {
         Time.timeScale = 1;
-        //image.transform.DOKill(false);
+        //imageFastForward.transform.DOKill(false);
     }
 }
