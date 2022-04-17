@@ -3,44 +3,53 @@ using System;
 
 public class PaddleControl : TouchableObject
 {
-    Rigidbody rb;
-    bool gotBall = true;
-
     [SerializeField, Range(0, 1)] float timeScaleMultiplyer = 0.2f;
+    [SerializeField] GameObject ball;
+    Transform ballDefaultPosition;
+    Rigidbody rb;
+    bool gotBall;
+    Vector3 defaultPosition;
     float fixedDeltaTime;
 
     public static event Action PaddleDoubleTapped;
+
 
     //TEMPORARY
     public float maxAllowedWidth;
     Boundaries boundaries;
 
-    //private void OnEnable()
-    // {
-    //   TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
-    //  }
-
-    // private void OnDisable()
-    // {
-    //     TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
-    // }
-
-    private void OnDestroy()
+    public override void OnEnable()
     {
-        TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
-        SetTimeScale(1);
+        base.OnEnable();
+        TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
+        ResourceManager.BallLoaded += LoadBall;
+
+        ballDefaultPosition = GameObject.Find("Ball Position").GetComponent<Transform>();
+        defaultPosition = transform.position;
     }
 
+    public override void OnDisable()
+    {
+        base.OnDisable();
+        TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
+        ResourceManager.BallLoaded -= LoadBall;
+    }
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         fixedDeltaTime = Time.fixedDeltaTime;
-
-        TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
+        //TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
 
         float paddleWidth = GameObject.FindGameObjectWithTag("Hitter").GetComponent<MeshCollider>().bounds.extents.x;
         boundaries = GameObject.FindObjectOfType<Boundaries>();
         maxAllowedWidth = boundaries.corners[1].x - paddleWidth;
+
+    }
+
+    private void OnDestroy()
+    {
+        //TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
+        SetTimeScale(1);
     }
 
     private void Update()
@@ -72,6 +81,13 @@ public class PaddleControl : TouchableObject
         //     objectDoubleTapped = false;
         // }
 
+    }
+
+    void LoadBall()
+    {
+        Debug.Log("Ball loaded");
+        Instantiate(ball, ballDefaultPosition.position, Quaternion.identity).GetComponent<Transform>().SetParent(transform);
+        gotBall = true;
     }
 
     void SetTimeScale(float scale)

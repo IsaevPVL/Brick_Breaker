@@ -1,47 +1,44 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System;
 
 public class Ball : MonoBehaviour
 {
-    public Rigidbody rb;
     public float contactMultiplier = 1f;
     public float speed = 10f;
-    
-    public bool isCollidedAfterLaunch = false;
-
-    [Space]
+    Rigidbody rb;
+    bool isInUse;
+    [Space, Header("Hit Particles")]
     public GameObject brickCollision;
+
+    public static event Action DeathLineTouched;
 
     private void OnEnable()
     {
         PaddleControl.PaddleDoubleTapped += LaunchBall;
-
+        ResourceManager.BallLoaded += DestroyThisBall;
         rb = GetComponent<Rigidbody>();
     }
 
     private void OnDisable()
     {
         PaddleControl.PaddleDoubleTapped -= LaunchBall;
+        ResourceManager.BallLoaded -= DestroyThisBall;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        isCollidedAfterLaunch = true;
-
-        if (collision.collider.CompareTag("Bottom"))
-        {
-            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        }
-
-        if (collision.collider.CompareTag("Hitter"))
-        {
-            CollideWithPaddle(collision);
-        }
-
         if(collision.collider.CompareTag("Brick")){
             ContactPoint contact = collision.contacts[0];
             GameObject hit = Instantiate(brickCollision, contact.point, Quaternion.FromToRotation(Vector3.up, contact.normal));
-            
+        }
+        else if (collision.collider.CompareTag("Hitter"))
+        {
+            CollideWithPaddle(collision);
+        }
+        else if (collision.collider.CompareTag("Bottom"))
+        {
+            DeathLineTouched?.Invoke();
+            Destroy(this.gameObject);
         }
     }
 
@@ -56,6 +53,7 @@ public class Ball : MonoBehaviour
         rb.isKinematic = false;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.AddForce(Vector3.up * speed, ForceMode.VelocityChange);
+        isInUse = true;
     }
 
     void CollideWithPaddle(Collision collision)
@@ -72,5 +70,10 @@ public class Ball : MonoBehaviour
     {
         direction.Normalize();
         rb.velocity = direction * speed;
+    }
+
+    void DestroyThisBall(){
+        if(isInUse)
+            Destroy(this.gameObject);
     }
 }

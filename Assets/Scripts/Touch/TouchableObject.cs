@@ -23,7 +23,7 @@ public class TouchableObject : MonoBehaviour
     public static event Action<string> ObjectWasDoubleTapped;
 
 
-    private void OnEnable()
+    public virtual void OnEnable()
     {
         TouchManager.ObjectWasTouched += ObjectWasTouched;
         TouchManager.TouchEnded += TouchEnded;
@@ -31,13 +31,13 @@ public class TouchableObject : MonoBehaviour
         objectDefaultPosition = transform.position;
     }
 
-    private void OnDisable()
+    public virtual void OnDisable()
     {
         TouchManager.ObjectWasTouched -= ObjectWasTouched;
         TouchManager.TouchEnded -= TouchEnded;
     }
 
-    private void LateUpdate()
+    void LateUpdate()
     {
         if (isTouched)
         {

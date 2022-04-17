@@ -1,17 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Brick : MonoBehaviour
 {
-    public int health;
-
+    [SerializeField] GameObject projectile;
+    [SerializeField] Transform spawnPosition;
     Renderer meshRenderer;
+    int health;
+
 
     private void Awake() {
         meshRenderer = GetComponent<Renderer>();
-
-        health = Random.Range(1, 4);
+        health = Random.Range(1, 3);
     }
 
     private void OnCollisionEnter(Collision other) {
@@ -23,6 +22,7 @@ public class Brick : MonoBehaviour
     void Hit(){
         health--;
         if(health <= 0){
+            Instantiate(projectile, spawnPosition.position, Quaternion.identity);
             Destroy(gameObject);
         }else{
             meshRenderer.material.color = Random.ColorHSV();

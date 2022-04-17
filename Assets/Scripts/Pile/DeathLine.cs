@@ -10,7 +10,7 @@ public class DeathLine : MonoBehaviour
 
         transform.position = deathLineLevel;
 
-        GetComponent<BoxCollider>().size = new Vector3(boundaries.deeperCorners[1].x * 2f, 0, 1);
+        GetComponent<BoxCollider>().size = new Vector3(boundaries.deeperCorners[1].x * 2f, 0, 3);
 
         LineRenderer lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 2;

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DirectionChange : PlaceableObject
 {
-    public Ball ball;
+    Ball ball;
     Vector3 desiredDirection;
     bool primed;
 
@@ -18,6 +18,7 @@ public class DirectionChange : PlaceableObject
         }
         primed = true;
         desiredDirection = touchPosition;
+        ball = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>();
         Vector3 ballOffset = ball.transform.position - objectPositionAtTouch + objectTouchOffset;
         desiredDirection = (desiredDirection + ballOffset) - ball.transform.position;
     }

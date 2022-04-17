@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class ResourceManager : MonoBehaviour
+public class ResourcePosition : MonoBehaviour
 {
     [SerializeField] float maxXOffset;
     [SerializeField] float minXOffset;
     [SerializeField] float yOffset;
     [SerializeField] float zOffset;
     [SerializeField] float followTime = 0.05f;
-    [SerializeField] Ease easeType;
+    [SerializeField] Ease yEaseType;
+    [SerializeField] Ease followEaseType;
     Transform paddle;
     float maxPaddleXPosition;
     Boundaries boundaries;
@@ -22,7 +23,7 @@ public class ResourceManager : MonoBehaviour
     Vector3 desiredPosition;
     int flip;
 
-    GameObject paddleObj; //TEMPORARY
+    GameObject paddleObj; //TEMPORARY, REMOVE FROM UPDATE
 
     private void Start() {
         paddleObj = GameObject.FindGameObjectWithTag("Paddle");
@@ -42,11 +43,12 @@ public class ResourceManager : MonoBehaviour
         desiredPosition.z = paddle.position.z + zOffset;
         
         //transform.DOShakePosition(1, 0.05f, 5, 180, false, false).SetLoops(-1);
+        transform.DOMoveY(desiredPosition.y - 0.2f, 1).SetLoops(-1, LoopType.Yoyo).SetEase(yEaseType);
     }
 
     private void Update() {
         // desiredPosition.x = -paddle.position.x;
-        if(paddle.position.x >= 0){
+        if(paddle.position.x > 0.1){
             flip = 1;
         }else{
             flip = -1;
@@ -56,6 +58,6 @@ public class ResourceManager : MonoBehaviour
         //Debug.Log(paddle.position.x + " : " + paddlePositionX);
         desiredPosition.x = Mathf.Lerp(maxXPosition, minXPosition,  paddlePositionX) * -flip; 
         //transform.position = desiredPosition;
-        transform.DOMove(desiredPosition, followTime).SetEase(easeType);
+        transform.DOMoveX(desiredPosition.x, followTime).SetEase(followEaseType);
     }
 }
