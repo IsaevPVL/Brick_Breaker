@@ -22,6 +22,7 @@ public class Brick : MonoBehaviour
     void Hit(){
         health--;
         if(health <= 0){
+            EnergyManager.active.AddEnergy(Random.Range(20, 41));
             Instantiate(projectile, spawnPosition.position, Quaternion.identity);
             Destroy(gameObject);
         }else{

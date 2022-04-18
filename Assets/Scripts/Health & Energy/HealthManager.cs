@@ -5,12 +5,11 @@ using DG.Tweening;
 using TMPro;
 using System;
 
-public class ResourceManager : MonoBehaviour
+public class HealthManager : MonoBehaviour
 {
     [SerializeField] TextMeshPro ballCount;
     [SerializeField] Transform healthbar;
     Stack<int> balls = new Stack<int>();
-    Stack<int> energy = new Stack<int>();
 
     public int currentHealth;
     float maxHealthbarScale;

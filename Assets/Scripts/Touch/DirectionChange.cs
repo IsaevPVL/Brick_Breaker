@@ -11,9 +11,15 @@ public class DirectionChange : PlaceableObject
         if (!isTouched)
         {   
             if(primed){
+                EnergyManager.active.UseEnergyBars(1);
                 ball.GetComponent<Rigidbody>().velocity = desiredDirection.normalized * ball.speed;
                 primed = false;
             }
+            return;
+        }
+
+        if(!EnergyManager.active.CheckIfEnergyBarsAvailable(1)){
+            Debug.Log("Not enough energy");
             return;
         }
         primed = true;

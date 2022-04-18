@@ -15,14 +15,14 @@ public class Ball : MonoBehaviour
     private void OnEnable()
     {
         PaddleControl.PaddleDoubleTapped += LaunchBall;
-        ResourceManager.BallLoaded += DestroyThisBall;
+        HealthManager.BallLoaded += DestroyThisBall;
         rb = GetComponent<Rigidbody>();
     }
 
     private void OnDisable()
     {
         PaddleControl.PaddleDoubleTapped -= LaunchBall;
-        ResourceManager.BallLoaded -= DestroyThisBall;
+        HealthManager.BallLoaded -= DestroyThisBall;
     }
 
     private void OnCollisionEnter(Collision collision)

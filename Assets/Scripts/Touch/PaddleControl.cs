@@ -22,7 +22,7 @@ public class PaddleControl : TouchableObject
     {
         base.OnEnable();
         TouchableObject.ObjectWasDoubleTapped += GotTwoTaps;
-        ResourceManager.BallLoaded += LoadBall;
+        HealthManager.BallLoaded += LoadBall;
 
         ballDefaultPosition = GameObject.Find("Ball Position").GetComponent<Transform>();
         defaultPosition = transform.position;
@@ -32,7 +32,7 @@ public class PaddleControl : TouchableObject
     {
         base.OnDisable();
         TouchableObject.ObjectWasDoubleTapped -= GotTwoTaps;
-        ResourceManager.BallLoaded -= LoadBall;
+        HealthManager.BallLoaded -= LoadBall;
     }
     private void Start()
     {
@@ -85,7 +85,7 @@ public class PaddleControl : TouchableObject
 
     void LoadBall()
     {
-        Debug.Log("Ball loaded");
+        //Debug.Log("Ball loaded");
         Instantiate(ball, ballDefaultPosition.position, Quaternion.identity).GetComponent<Transform>().SetParent(transform);
         gotBall = true;
     }
