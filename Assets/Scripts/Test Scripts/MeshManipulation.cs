@@ -33,7 +33,7 @@ public class MeshManipulation : MonoBehaviour
         this.GetComponent<MeshRenderer>().enabled = false;
 
         Mesh objectMesh = this.GetComponent<MeshFilter>().mesh;
-        //Edge[] edges = GetMeshEdges(objectMesh);
+        Edge[] edges = GetMeshEdges(objectMesh);
         List <Vector3> vertices = GetMeshVertices(objectMesh);
 
         //Printing in log
@@ -42,8 +42,8 @@ public class MeshManipulation : MonoBehaviour
         //    print(i + ": " + edges[i].v1 + ", " + edges[i].v2);
         // }
 
-        //DrawEdgeLines(edges);
-        DrawVerticesLines(vertices);
+        DrawEdgeLines(edges);
+        //DrawVerticesLines(vertices);
 
     }
 

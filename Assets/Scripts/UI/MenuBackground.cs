@@ -18,12 +18,14 @@ public class MenuBackground : MonoBehaviour
 
     private void OnEnable()
     {
-        TouchableObject.ObjectWasTapped += OnTap;
+        //TouchableObject.ObjectWasTapped += OnTap;
+        UIManager.StateChanged += OnStateChange;
     }
 
     private void OnDisable()
     {
-        TouchableObject.ObjectWasTapped -= OnTap;
+        //TouchableObject.ObjectWasTapped -= OnTap;
+        UIManager.StateChanged -= OnStateChange;
     }
 
     IEnumerator Start()
@@ -45,6 +47,20 @@ public class MenuBackground : MonoBehaviour
 
     }
 
+    void OnStateChange(UIState state)
+    {
+        if (state == UIState.Gameplay)
+        {
+            background.transform.DOScale(defaultScale, closeTime);
+            buttons.SetActive(false);
+        }
+        else
+        {
+            background.transform.DOScale(topRightCorner, openTime);
+            buttons.SetActive(true);
+        }
+    }
+
     void OnTap(string obj)
     {
         if (obj == "Menu")
@@ -58,9 +74,9 @@ public class MenuBackground : MonoBehaviour
                 return;
             }
 
-            isOpen = false;
             background.transform.DOScale(defaultScale, closeTime);
             buttons.SetActive(false);
+            isOpen = false;
             //Time.fixedDeltaTime = 1;
         }
     }

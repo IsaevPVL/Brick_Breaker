@@ -24,10 +24,8 @@ public class ButtonElement : TouchableObject
 
     void RestartScene(string name)
     {
-        Debug.Log("hi");
         if (name == "Restart")
         {
-            
             //SceneManager.MergeScenes(SceneManager.GetActiveScene(), SceneManager.CreateScene(Time.time.ToString()));
             SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
         }

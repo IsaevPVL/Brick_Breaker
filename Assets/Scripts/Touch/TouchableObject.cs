@@ -18,6 +18,7 @@ public class TouchableObject : MonoBehaviour
     int numberOfTaps;
     float tapDuration;
     public bool isHeld { get; private set; } = false;
+    public bool isTapped { get; private set; } = false;
 
     public static event Action<string> ObjectWasTapped;
     public static event Action<string> ObjectWasDoubleTapped;
@@ -95,6 +96,7 @@ public class TouchableObject : MonoBehaviour
             else
             {
                 Tapped();
+                //isTapped();
             }
         }
     }
@@ -104,7 +106,15 @@ public class TouchableObject : MonoBehaviour
         ObjectWasTapped?.Invoke(this.name);
         //Debug.Log(this.name + " is tapped");
         numberOfTaps = 0;
+        isTapped = true;
     }
+    public void ResetTap(){
+        isTapped = false;
+    }
+
+    // public bool isTapped(){
+    //     return true;
+    // }
 
     IEnumerator TapsCountdown()
     {

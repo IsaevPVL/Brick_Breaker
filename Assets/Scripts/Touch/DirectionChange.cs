@@ -6,8 +6,10 @@ public class DirectionChange : PlaceableObject
     Vector3 desiredDirection;
     bool primed;
 
-    private void Update()
+    //DEAL WITH OVERRIDE
+    public override void Update()
     {
+
         if (!isTouched)
         {   
             if(primed){
