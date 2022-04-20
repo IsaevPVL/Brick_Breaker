@@ -1,5 +1,5 @@
 public enum UIState
-{
+{   
     Gameplay,
     Files,
     Terminal,

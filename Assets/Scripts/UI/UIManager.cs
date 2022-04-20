@@ -11,10 +11,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] UIButtonObject menu;
     Dictionary<UIState, UIButtonObject> buttons;
 
-    UIState currentState;
-    //UIState previousState;
+    UIState currentState = UIState.Gameplay;
 
-    public static event Action<UIState> StateChanged;
+    public static event Action<UIState> StateChanged; //NEED?
 
     private void OnEnable()
     {
@@ -24,38 +23,26 @@ public class UIManager : MonoBehaviour
             {UIState.Network, network},
             { UIState.Menu, menu},
             };
-        // foreach (KeyValuePair<UIState, UIButtonObject> kvp in buttons)
-        // {
-        //     kvp.Value.thisState = kvp.Key;
-        // }
     }
 
     public void SetThisStateCurrent(UIState upcomingState)
-    {   
-        //previousState = currentState;
-
-        if (currentState == UIState.Gameplay)
+    {
+        if (buttons.ContainsKey(currentState))
+        {
+            buttons[currentState].UnpressButton();
+        }
+        if (buttons.ContainsKey(upcomingState))
         {
             buttons[upcomingState].PressButton();
-            currentState = upcomingState;
         }
-        else if (upcomingState == UIState.Gameplay)
-        {
-            buttons[currentState].UnpressButton();
-            currentState = upcomingState;
-        }
-        else
-        {
-            buttons[currentState].UnpressButton();
-            currentState = upcomingState;
-            buttons[currentState].PressButton();
-        }
-        ImplementCurrentState();
+        ImplementUpcomingState(upcomingState);
+        currentState = upcomingState;
     }
 
-    public void ImplementCurrentState()
+    public void ImplementUpcomingState(UIState upcomingState)
     {
-        StateChanged?.Invoke(currentState);
+        StateChanged?.Invoke(upcomingState);
+        GameObject.FindObjectOfType<MenuBackground>().SetState(upcomingState, currentState);
     }
 
     public bool CheckCurrentState(UIState state)
