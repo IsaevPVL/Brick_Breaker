@@ -21,9 +21,9 @@ public class PlaceableObject : TouchableObject
         InventoryGrid.NewScale -= NewScale;
     }
 
-    void Start()
+    IEnumerator Start()
     {
-        //yield return new WaitForSecondsRealtime(0.1f);
+        yield return new WaitForSecondsRealtime(0.1f);
         //NewScale(new Vector2(InventoryGrid.active.horizontalSector * dimensions.x, InventoryGrid.active.verticalSector * dimensions.y));
         transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(defaultCell);
     }

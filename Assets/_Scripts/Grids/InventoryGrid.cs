@@ -35,8 +35,6 @@ public class InventoryGrid : MonoBehaviour
         {
             active = this;
         }
-
-        boundaries = GameObject.FindObjectOfType<Boundaries>();
     }
 
     private void Start()
@@ -44,6 +42,7 @@ public class InventoryGrid : MonoBehaviour
         Grid inventoryGrid = inventoryGridLayout.GetComponent<Grid>();
         //Grid fieldGrid = fieldGridLayout.GetComponent<Grid>();
 
+        boundaries = GameObject.FindObjectOfType<Boundaries>();
         bottomLeftCorner = boundaries.corners[3];
         Vector3 bottomBoundCentre = new Vector3(0, bottomLeftCorner.y, 0);
         Vector3 closestPaddlePoint = GameObject.FindGameObjectWithTag("Paddle").GetComponent<Rigidbody>().ClosestPointOnBounds(bottomBoundCentre);

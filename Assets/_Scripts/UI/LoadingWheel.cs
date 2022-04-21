@@ -18,7 +18,8 @@ public class LoadingWheel : MonoBehaviour
         while (true)
         {
             transform.Rotate(new Vector3(0, 0, 45f));
-            yield return new WaitForSecondsRealtime(speed);
+            //yield return new WaitForSecondsRealtime(speed);
+            yield return Helpers.GetWait(speed);
         }
     }
 }

@@ -17,6 +17,7 @@ public class MenuBackground : MonoBehaviour
     float fieldYTop;
     float inventoryYTop;
     GameObject currentStateElement;
+    Sequence sequence;
     //float loadingWheelDefaultY;
 
     //InventoryGrid gridSystem;
@@ -36,8 +37,9 @@ public class MenuBackground : MonoBehaviour
 
     IEnumerator Start()
     {
-        yield return new WaitForSecondsRealtime(.1f);
+        yield return new WaitForSecondsRealtime(.1f);   //Waiting for InventoryGrid
         CalculateDefaultBoundaries();
+        sequence = DOTween.Sequence();
 
     }
 
@@ -85,7 +87,10 @@ public class MenuBackground : MonoBehaviour
 
     void SetBackground(float bottomUnits, float topUnits, GameObject stateElement = null, bool showWheel = true)
     {   
-        Sequence sequence = DOTween.Sequence();
+        //Sequence sequence = DOTween.Sequence();
+            sequence.Kill(true);
+            sequence = DOTween.Sequence();
+
 
         // if (showWheel)
         // {
@@ -130,13 +135,10 @@ public class MenuBackground : MonoBehaviour
 
         fieldYTop = GameObject.FindObjectOfType<Boundaries>().corners[1].y - transform.position.y;
         Vector3 inventoryTopRightCorner = GameObject.FindObjectOfType<InventoryGrid>().inventoryTopRightCorner;
-        //inventoryYTop = inventoryTopRightCorner.y;
-        //Debug.Log(inventoryYTop);
         inventoryTopRightCorner.y += GameObject.FindObjectOfType<InventoryBorders>().lineWidth * 2;
         Vector3 viewportInventory = Camera.main.WorldToViewportPoint(inventoryTopRightCorner);
         viewportInventory.z -= background.transform.position.z;
         inventoryYTop = Camera.main.ViewportToWorldPoint(viewportInventory).y;
-        //Debug.Log(inventoryYTop);
 
         background.transform.localScale = new Vector3(inventoryTopRightCorner.x * 2, 0, 1);
         defaultYScale = background.transform.lossyScale.y;
@@ -145,24 +147,4 @@ public class MenuBackground : MonoBehaviour
         loadingWheel.transform.position += new Vector3(inventoryTopRightCorner.x, 0, background.transform.localPosition.z - 0.01f);
         //loadingWheelDefaultY = loadingWheel.transform.position.y;
     }
-
-    // void OnTap(string obj)
-    // {
-    //     if (obj == "Menu")
-    //     {
-    //         if (isOpen == false)
-    //         {
-    //             isOpen = true;
-    //             background.transform.DOScale(topRightCorner, openTime);
-    //             buttons.SetActive(true);
-    //             //Time.fixedDeltaTime = 0;
-    //             return;
-    //         }
-
-    //         background.transform.DOScale(defaultScale, closeTime);
-    //         buttons.SetActive(false);
-    //         isOpen = false;
-    //         //Time.fixedDeltaTime = 1;
-    //     }
-    // }
 }
