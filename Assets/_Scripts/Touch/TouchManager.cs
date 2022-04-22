@@ -48,7 +48,7 @@ public class TouchManager : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(touch.position);
             if (Physics.Raycast(ray, out objectTouched))
             {   
-                //Debug.Log(objectTouched.collider.name + " is touched");
+                Debug.Log(objectTouched.collider.name + " is touched");
                 positionZ = objectTouched.transform.position.z - cam.transform.position.z;
 
                 objectPositionAtTouch = objectTouched.transform.position;

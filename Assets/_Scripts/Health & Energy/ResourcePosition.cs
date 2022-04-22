@@ -25,7 +25,8 @@ public class ResourcePosition : MonoBehaviour
 
     GameObject paddleObj; //TEMPORARY, REMOVE FROM UPDATE
 
-    private void Start() {
+    void Start() {
+
         paddleObj = GameObject.FindGameObjectWithTag("Paddle");
         paddle = paddleObj.GetComponent<Transform>();
         maxPaddleXPosition = paddleObj.GetComponent<PaddleControl>().maxAllowedWidth;
@@ -37,6 +38,7 @@ public class ResourcePosition : MonoBehaviour
         maxXPosition = boundaries.corners[1].x - halfWidth + maxXOffset;
         //Debug.Log(maxXPosition);
         minXPosition = maxXPosition + minXOffset;
+        //minXPosition = boundaries.corners[1].x - GetComponent<InventoryGrid>().inventoryTopRightCorner.x;
         //Debug.Log(minXPosition);
 
         desiredPosition.y = paddle.position.y + yOffset;

@@ -27,13 +27,14 @@ public class UIManager : MonoBehaviour
 
     public void SetThisStateCurrent(UIState upcomingState)
     {
-        if (buttons.ContainsKey(currentState))
+        //if (buttons.ContainsKey(currentState))
+        if(buttons.TryGetValue(currentState, out UIButtonObject current))
         {
-            buttons[currentState].UnpressButton();
+            current.UnpressButton();
         }
-        if (buttons.ContainsKey(upcomingState))
+        if (buttons.TryGetValue(upcomingState, out UIButtonObject upcoming))
         {
-            buttons[upcomingState].PressButton();
+            upcoming.PressButton();
         }
         ImplementUpcomingState(upcomingState);
         currentState = upcomingState;
@@ -42,7 +43,7 @@ public class UIManager : MonoBehaviour
     public void ImplementUpcomingState(UIState upcomingState)
     {
         StateChanged?.Invoke(upcomingState);
-        GameObject.FindObjectOfType<MenuBackground>().SetState(upcomingState, currentState);
+        GameObject.FindObjectOfType<UIContentPanel>().SetState(upcomingState, currentState);
     }
 
     public bool CheckCurrentState(UIState state)
