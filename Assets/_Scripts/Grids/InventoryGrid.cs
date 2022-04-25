@@ -1,9 +1,11 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System;
 
 //[ExecuteInEditMode]
 public class InventoryGrid : MonoBehaviour
-{   
+{
     public static event Action<Vector2> NewScale;
 
     public static InventoryGrid active;
@@ -25,6 +27,9 @@ public class InventoryGrid : MonoBehaviour
     public float verticalSector;
     public Vector2 inventoryPadding;
 
+    Dictionary<Vector3Int, bool> cellFree;
+    Vector3Int startCell;
+
     private void Awake()
     {
         if (active != null && active != this)
@@ -38,6 +43,90 @@ public class InventoryGrid : MonoBehaviour
     }
 
     private void Start()
+    {
+        CalculateGrid();
+        InitializeCellAvailability();
+    }
+
+    public void InitializeCellAvailability()
+    {
+        cellFree = new Dictionary<Vector3Int, bool>(inventoryDimensions.x * inventoryDimensions.y);
+
+        Vector3Int current = Vector3Int.zero;
+        for (int y = 0; y < inventoryDimensions.y; y++)
+        {
+            current.y = y;
+            for (int x = 0; x < inventoryDimensions.x; x++)
+            {
+                current.x = x;
+                cellFree[current] = true;
+            }
+        }
+    }
+
+    public void PlaceObject(PlaceableObject obj, bool toCell = false)
+    {
+        if (toCell)
+        {
+            startCell = obj.defaultCell;
+        }
+        else
+        {
+            startCell = ToCell(obj.touchPosition);
+            if (startCell == ToCell(obj.transform.position) || !cellFree.ContainsKey(startCell) || !cellFree.ContainsKey(startCell + new Vector3Int(obj.dimensions.x - 1, obj.dimensions.y - 1, 0))) return;
+
+            foreach (Vector3Int cell in obj.occupiedCells)
+            {
+                cellFree[cell] = true;
+            }
+        }
+
+        bool isFree = true;
+        Vector3Int currentCell = Vector3Int.zero;
+        Stack<Vector3Int> tempCells = new Stack<Vector3Int>(obj.dimensions.x * obj.dimensions.y);
+
+        for (int y = startCell.y; y < startCell.y + obj.dimensions.y; y++)
+        {
+            currentCell.y = y;
+            for (int x = startCell.x; x < startCell.x + obj.dimensions.x; x++)
+            {
+                currentCell.x = x;
+                if (!cellFree[currentCell])
+                {
+                    isFree = false;
+                }
+                else
+                {
+                    tempCells.Push(currentCell);
+                }
+            }
+        }
+
+        if (isFree)
+        {
+            obj.occupiedCells.Clear();
+            for (int i = tempCells.Count; i > 0; i--)
+            {
+                obj.occupiedCells.Push(tempCells.Peek());
+                cellFree[tempCells.Pop()] = false;
+            }
+            obj.transform.position = inventoryGridLayout.CellToWorld(startCell) + new Vector3(inventoryGridLayout.cellGap.x / 2, 0, 0);
+        }
+        else
+        {
+            foreach (Vector3Int cell in obj.occupiedCells)
+            {
+                cellFree[cell] = false;
+            }
+        }
+    }
+
+    Vector3Int ToCell(Vector3 position)
+    {
+        return inventoryGridLayout.WorldToCell(position);
+    }
+
+    public void CalculateGrid()
     {
         Grid inventoryGrid = inventoryGridLayout.GetComponent<Grid>();
         //Grid fieldGrid = fieldGridLayout.GetComponent<Grid>();

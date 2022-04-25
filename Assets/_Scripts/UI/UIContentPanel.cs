@@ -23,6 +23,7 @@ public class UIContentPanel: MonoBehaviour
     float defaultYScale;
     float fieldYTop;
     float inventoryYTop;
+    float bricksStart;
     GameObject currentPanel;
     Sequence sequence;
     Dictionary<UIState, GameObject> panels;
@@ -48,7 +49,6 @@ public class UIContentPanel: MonoBehaviour
             if(panels.TryGetValue(item.Key, out GameObject obj))
                 obj?.SetActive(false);
         }
-
     }
 
     public void SetState(UIState upcomingState, UIState currentState)
@@ -57,7 +57,7 @@ public class UIContentPanel: MonoBehaviour
         switch (upcomingState)
         {
             case UIState.Files:
-                SetBackground(inventoryYTop - defaultYPosition, (fieldYTop + inventoryYTop), upcomingState);
+                SetBackground(inventoryYTop - defaultYPosition, (bricksStart + inventoryYTop), upcomingState);
                 break;
 
             case UIState.Terminal:
@@ -94,6 +94,9 @@ public class UIContentPanel: MonoBehaviour
                 loadingWheel.SetActive(true);
                 canvas.gameObject.SetActive(true);
                 currentPanel?.SetActive(false);
+            }else{
+                if(currentPanel == files)
+                   currentPanel.SetActive(false); 
             }
         });
 
@@ -133,6 +136,7 @@ public class UIContentPanel: MonoBehaviour
         transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(new Vector3Int(0, 2, 0));
 
         fieldYTop = GameObject.FindObjectOfType<Boundaries>().corners[1].y - transform.position.y;
+        bricksStart = GameObject.FindObjectOfType<FieldGrid>().transform.position.y - transform.position.y - 0.5f;
         Vector3 inventoryTopRightCorner = GameObject.FindObjectOfType<InventoryGrid>().inventoryTopRightCorner;
         inventoryTopRightCorner.y += GameObject.FindObjectOfType<InventoryBorders>().lineWidth * 2;
         Vector3 viewportInventory = Camera.main.WorldToViewportPoint(inventoryTopRightCorner);

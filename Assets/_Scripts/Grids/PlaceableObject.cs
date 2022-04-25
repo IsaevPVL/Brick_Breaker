@@ -1,14 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //[ExecuteInEditMode]
 public class PlaceableObject : TouchableObject
 {
     public Vector3Int defaultCell;
-    public bool isUnlocked = true;
+    [SerializeField] bool isUnlocked = true;
     public Transform visual;
-    public GameObject text;
+    [SerializeField] GameObject text;
     public Vector2Int dimensions;
+
+    public Stack<Vector3Int> occupiedCells = new Stack<Vector3Int>();
 
     public override void OnEnable()
     {
@@ -25,7 +28,8 @@ public class PlaceableObject : TouchableObject
     {
         yield return new WaitForSecondsRealtime(0.1f);
         //NewScale(new Vector2(InventoryGrid.active.horizontalSector * dimensions.x, InventoryGrid.active.verticalSector * dimensions.y));
-        transform.position = InventoryGrid.active.inventoryGridLayout.CellToWorld(defaultCell);
+
+        InventoryGrid.active.PlaceObject(this, true);
     }
 
     public virtual void Update()
@@ -34,10 +38,8 @@ public class PlaceableObject : TouchableObject
         {
             return;
         }
-
-        if (isUnlocked && InventoryGrid.active.WithinGridBoundaries(touchPosition + objectTouchOffset))
-        {
-            transform.position = InventoryGrid.active.SnapCordinateToGrid();
+        if(isUnlocked){
+            InventoryGrid.active.PlaceObject(this);
         }
     }
 

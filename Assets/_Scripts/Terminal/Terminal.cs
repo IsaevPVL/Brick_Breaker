@@ -7,15 +7,15 @@ public class Terminal : MonoBehaviour
 {
     [Header("Line")]
 
-    public int maxLines = 10;
+    [SerializeField] int maxLines = 10;
     Queue<string> linesToDisplay = new Queue<string>(5);
 
     [Space]
     [Header("Cursor")]
 
-    public char cursorChar = '█'; // Cursor character. Default: █
-    public float cursorBlinkingTime = 0.1f;
-    public float typingDelay = 1f;
+    [SerializeField] char cursorChar = '█'; // Cursor character. Default: █
+    [SerializeField] float cursorBlinkingTime = 0.1f;
+    [SerializeField] float typingDelay = 1f;
 
     bool isTyping = false; //Should the cursor be paused
     bool cursorVisible;
@@ -25,8 +25,7 @@ public class Terminal : MonoBehaviour
 
     [Space]
     [Header("Typing Effect")]
-    public float characterDelay = 0.02f;
-    public float fastForwardMultiplier = 1f;
+    [SerializeField] float characterDelay = 0.02f;
     Coroutine currentlyPrinting;
 
     TextMeshProUGUI screen;
@@ -49,22 +48,22 @@ public class Terminal : MonoBehaviour
 
     IEnumerator TerminalTest()
     {
-        print("hi");
-        yield return Helpers.GetWait(0.5f);
+        yield return Helpers.GetWaitRealtime(1f);
         int i = 1;
-        print("hi1");
         while (i < 20)
         {
-            print("hi2");
             yield return AddLine("This is a test " + i, true);
             i++;
             //yield return Helpers.GetWait(0.5f);
         }
     }
 
-    IEnumerator AddLine(string line, bool displayImmediately = false)
+    public void PrintLine(string line, bool displayImmediately = true){
+        StartCoroutine(AddLine(line, displayImmediately));
+    }
+
+    IEnumerator AddLine(string line, bool displayImmediately = true)
     {
-        print("hi add");
         linesToDisplay.Enqueue(line);
 
         for (int i = linesToDisplay.Count; i > maxLines; i--)
@@ -83,7 +82,6 @@ public class Terminal : MonoBehaviour
         //     StopCoroutine(currentlyPrinting);
         // }
         // StopRunningCursor(typingDelay);
-        print("display");
 
         Queue<string> temp = new Queue<string>(lines);
         string presentLines = "";
@@ -103,28 +101,26 @@ public class Terminal : MonoBehaviour
 
     IEnumerator PrintLastLine(string line, float delay = 0.02f)
     {
-        print("hi print last");
-        yield return Helpers.GetWait(delay);
+        yield return Helpers.GetWaitRealtime(delay);
         foreach (char character in line.ToCharArray())
         {
             StopRunningCursor(typingDelay);
             screen.text += character;
-            yield return Helpers.GetWait(delay);
+            yield return Helpers.GetWaitRealtime(delay);
         }
     }
 
     void StopRunningCursor(float typingDelay)
     {
-        print("hi stop");
         isTyping = true;
-        timeToResumeCursor = Time.time + typingDelay;
+        timeToResumeCursor = Time.unscaledTime + typingDelay;
     }
 
     IEnumerator RunningCursor()
     {
         while (true)
         {
-            if (Time.time > timeToResumeCursor)
+            if (Time.unscaledTime > timeToResumeCursor)
             {
                 isTyping = false;
             }
@@ -162,27 +158,27 @@ public class Terminal : MonoBehaviour
                 cursorVisible = false;
             }
 
-            yield return Helpers.GetWait(cursorBlinkingTime);
+            yield return Helpers.GetWaitRealtime(cursorBlinkingTime);
         }
     }
 
-    IEnumerator TypeOK(int dots, float delay, string word = "")
-    {   
-        if(word != ""){
-            screen.text += "\n";
-            foreach(char symbol in word){
-                screen.text += symbol;
-                yield return new WaitForSeconds(characterDelay);
-            }
-        }
-        for (int i = 0; i < dots; i++)
-        {
-            screen.text += ".";
-            yield return new WaitForSeconds(delay * fastForwardMultiplier);
-        }
-        screen.text += " ";
-        screen.text += "o";
-        yield return new WaitForSeconds(0.04f * fastForwardMultiplier);
-        screen.text += "k";
-    }
+    // IEnumerator TypeOK(int dots, float delay, string word = "")
+    // {   
+    //     if(word != ""){
+    //         screen.text += "\n";
+    //         foreach(char symbol in word){
+    //             screen.text += symbol;
+    //             yield return new WaitForSeconds(characterDelay);
+    //         }
+    //     }
+    //     for (int i = 0; i < dots; i++)
+    //     {
+    //         screen.text += ".";
+    //         yield return new WaitForSeconds(delay);
+    //     }
+    //     screen.text += " ";
+    //     screen.text += "o";
+    //     yield return new WaitForSeconds(0.04f);
+    //     screen.text += "k";
+    // }
 }
