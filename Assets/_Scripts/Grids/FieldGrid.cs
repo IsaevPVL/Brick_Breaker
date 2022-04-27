@@ -67,7 +67,7 @@ public class FieldGrid : MonoBehaviour
 
         fieldGrid.cellSize = new Vector3(horizontalSector - fieldGrid.cellGap.x, verticalSector - fieldGrid.cellGap.y, 0);
 
-        scale = new Vector3(fieldGrid.cellSize.x / 2, fieldGrid.cellSize.y, 1);
+        scale = new Vector3(fieldGrid.cellSize.x / 2, fieldGrid.cellSize.y, 0.05f);
         //Vector3 scale = new Vector3(horizontalSector, verticalSector, 1);
     }
 
@@ -85,9 +85,9 @@ public class FieldGrid : MonoBehaviour
         {
             Vector3 cell = fieldGridLayout.CellToWorld(new Vector3Int(level.bricks[i].x, level.bricks[i].y, 0));
 
-            GameObject currentBrick = GameObject.Instantiate(brickPalette.GetBrickByIndex(level.bricks[i].z), new Vector3(cell.x, cell.y, cell.z + 1f), Quaternion.identity);
+            GameObject currentBrick = GameObject.Instantiate(brickPalette.GetBrickByIndex(level.bricks[i].z), new Vector3(cell.x, cell.y, cell.z + 1f), Quaternion.identity, brickHolder);
             currentBrick.transform.localScale = scale;
-            currentBrick.transform.SetParent(brickHolder);
+            //currentBrick.transform.SetParent(brickHolder);
 
         }
     }
@@ -100,9 +100,9 @@ public class FieldGrid : MonoBehaviour
             {
                 Vector3 cell = fieldGridLayout.CellToWorld(new Vector3Int(x, y, 0));
 
-                GameObject currentBrick = GameObject.Instantiate(brick, new Vector3(cell.x, cell.y, cell.z + 1f), Quaternion.identity);
+                GameObject currentBrick = GameObject.Instantiate(brick, new Vector3(cell.x, cell.y, cell.z ), Quaternion.identity, transform);
                 currentBrick.transform.localScale = scale;
-                currentBrick.transform.SetParent(transform);
+                //currentBrick.transform.SetParent(transform);
             }
         }
     }

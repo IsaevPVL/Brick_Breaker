@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6dea7b4ce81d2d94a91c708eaa617725, type: 2}
+  - {fileID: 2100000, guid: 0105073caa9ad934c8a2a2eb931d7fb7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -125,7 +125,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1989bc5fa33de9448391590e9a7ed44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
   contactMultiplier: 1
   speed: 12
   brickCollision: {fileID: 8462576173436362120, guid: cc25ed7dfdc2e3f4c884c574a046c761, type: 3}

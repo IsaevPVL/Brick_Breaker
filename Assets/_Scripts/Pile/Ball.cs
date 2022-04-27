@@ -10,6 +10,9 @@ public class Ball : MonoBehaviour
     [Space, Header("Hit Particles")]
     public GameObject brickCollision;
 
+    public Transform visual;
+    Vector3 fromRotation;
+
     public static event Action DeathLineTouched;
 
     private void OnEnable()
@@ -17,6 +20,8 @@ public class Ball : MonoBehaviour
         PaddleControl.PaddleDoubleTapped += LaunchBall;
         HealthManager.BallLoaded += DestroyThisBall;
         rb = GetComponent<Rigidbody>();
+
+        
     }
 
     private void OnDisable()
@@ -44,7 +49,20 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionExit(Collision other)
     {
+        if(rb.velocity.x < 0.001 && rb.velocity.x > -0.001 ){
+            rb.velocity += Vector3.right * UnityEngine.Random.Range(-0.1f, 0.1f);
+        }
+
         rb.velocity = rb.velocity.normalized * speed;
+        
+
+        //rb.rotation = Quaternion.LookRotation(rb.velocity.normalized, Vector3.back);
+        float angle = Vector3.Angle(rb.velocity, fromRotation);
+        print(angle);
+        //visual.rotation = Quaternion.Euler(0,0,angle);
+        //visual.rotation.SetLookRotation(rb.velocity);
+
+        fromRotation = rb.velocity;
     }
 
     void LaunchBall()
@@ -54,6 +72,7 @@ public class Ball : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.AddForce(Vector3.up * speed, ForceMode.VelocityChange);
         isInUse = true;
+        fromRotation = rb.velocity;
     }
 
     void CollideWithPaddle(Collision collision)

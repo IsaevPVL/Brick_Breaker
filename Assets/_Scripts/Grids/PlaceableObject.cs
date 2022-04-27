@@ -50,7 +50,7 @@ public class PlaceableObject : TouchableObject
         box.size = new Vector3(scale.x, scale.y, 0.2f);
         box.center = new Vector3(scale.x / 2, scale.y / 2, -0.1f);
 
-        if (visual != null)
+        if (visual != null) 
         {
             visual.localScale = new Vector3(scale.x, scale.y, 0.2f);
         }

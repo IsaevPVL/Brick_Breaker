@@ -51,5 +51,7 @@ public class InventoryBorders : MonoBehaviour
         line.startWidth = lineWidth;
         line.endWidth = lineWidth;
         line.material = lineMaterial;
+        line.startColor = new Color(0.1415094f, 0.1415094f, 0.1415094f);
+        line.endColor = new Color(0.1415094f, 0.1415094f, 0.1415094f);
     }
 }
