@@ -7,6 +7,7 @@ using System;
 public class InventoryGrid : MonoBehaviour
 {
     public static event Action<Vector2> NewScale;
+    public static event Action<PlaceableObject> ObjectPlaced;
 
     public static InventoryGrid active;
     public Transform element;
@@ -27,7 +28,7 @@ public class InventoryGrid : MonoBehaviour
     public float verticalSector;
     public Vector2 inventoryPadding;
 
-    Dictionary<Vector3Int, bool> cellFree;
+    public Dictionary<Vector3Int, PlaceableObject> cellFree;
     Vector3Int startCell;
 
     private void Awake()
@@ -50,7 +51,7 @@ public class InventoryGrid : MonoBehaviour
 
     public void InitializeCellAvailability()
     {
-        cellFree = new Dictionary<Vector3Int, bool>(inventoryDimensions.x * inventoryDimensions.y);
+        cellFree = new Dictionary<Vector3Int, PlaceableObject>(inventoryDimensions.x * inventoryDimensions.y);
 
         Vector3Int current = Vector3Int.zero;
         for (int y = 0; y < inventoryDimensions.y; y++)
@@ -59,12 +60,12 @@ public class InventoryGrid : MonoBehaviour
             for (int x = 0; x < inventoryDimensions.x; x++)
             {
                 current.x = x;
-                cellFree[current] = true;
+                cellFree[current] = null;
             }
         }
     }
 
-    public void PlaceObject(PlaceableObject obj, bool toCell = false)
+    public bool PlaceObject(PlaceableObject obj, bool toCell = false)
     {
         if (toCell)
         {
@@ -72,12 +73,12 @@ public class InventoryGrid : MonoBehaviour
         }
         else
         {
-            startCell = ToCell(obj.touchPosition);
-            if (startCell == ToCell(obj.transform.position) || !cellFree.ContainsKey(startCell) || !cellFree.ContainsKey(startCell + new Vector3Int(obj.dimensions.x - 1, obj.dimensions.y - 1, 0))) return;
+            startCell = ToCell(obj.touchPosition + obj.objectTouchOffset);
+            if (startCell == ToCell(obj.transform.position) || !cellFree.ContainsKey(startCell) || !cellFree.ContainsKey(startCell + new Vector3Int(obj.dimensions.x - 1, obj.dimensions.y - 1, 0))) return false;
 
             foreach (Vector3Int cell in obj.occupiedCells)
             {
-                cellFree[cell] = true;
+                cellFree[cell] = null;
             }
         }
 
@@ -91,7 +92,7 @@ public class InventoryGrid : MonoBehaviour
             for (int x = startCell.x; x < startCell.x + obj.dimensions.x; x++)
             {
                 currentCell.x = x;
-                if (!cellFree[currentCell])
+                if (cellFree[currentCell] != null)
                 {
                     isFree = false;
                 }
@@ -108,16 +109,23 @@ public class InventoryGrid : MonoBehaviour
             for (int i = tempCells.Count; i > 0; i--)
             {
                 obj.occupiedCells.Push(tempCells.Peek());
-                cellFree[tempCells.Pop()] = false;
+                cellFree[tempCells.Pop()] = obj;
             }
             obj.transform.position = inventoryGridLayout.CellToWorld(startCell) + new Vector3(inventoryGridLayout.cellGap.x / 2, 0, 0);
+            
+            if(!toCell){
+                ObjectPlaced?.Invoke(obj);
+            }
+            return true;
         }
         else
         {
             foreach (Vector3Int cell in obj.occupiedCells)
             {
-                cellFree[cell] = false;
+                cellFree[cell] = obj;
             }
+
+            return false;
         }
     }
 

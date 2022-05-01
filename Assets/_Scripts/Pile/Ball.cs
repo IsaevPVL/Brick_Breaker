@@ -5,13 +5,13 @@ public class Ball : MonoBehaviour
 {
     public float contactMultiplier = 1f;
     public float speed = 10f;
-    Rigidbody rb;
+    public Rigidbody rb;
     bool isInUse;
     [Space, Header("Hit Particles")]
     public GameObject brickCollision;
 
     public Transform visual;
-    Vector3 fromRotation;
+    //Vector3 fromRotation;
 
     public static event Action DeathLineTouched;
 
@@ -21,7 +21,7 @@ public class Ball : MonoBehaviour
         HealthManager.BallLoaded += DestroyThisBall;
         rb = GetComponent<Rigidbody>();
 
-        
+
     }
 
     private void OnDisable()
@@ -32,7 +32,10 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider.CompareTag("Brick")){
+        print(rb.velocity);
+
+        if (collision.collider.CompareTag("Brick"))
+        {
             ContactPoint contact = collision.contacts[0];
             GameObject hit = Instantiate(brickCollision, contact.point, Quaternion.FromToRotation(Vector3.up, contact.normal));
         }
@@ -44,25 +47,31 @@ public class Ball : MonoBehaviour
         {
             DeathLineTouched?.Invoke();
             Destroy(this.gameObject);
+            return;
         }
+        RotateVisual();
     }
 
     private void OnCollisionExit(Collision other)
     {
-        if(rb.velocity.x < 0.001 && rb.velocity.x > -0.001 ){
+        //Preventing ball from staying on X/Y axis
+        if (rb.velocity.x < 0.001 && rb.velocity.x > -0.001)
+        {
             rb.velocity += Vector3.right * UnityEngine.Random.Range(-0.1f, 0.1f);
+        }
+        if (rb.velocity.y < 0.001 && rb.velocity.y > -0.001)
+        {
+            rb.velocity += Vector3.up * UnityEngine.Random.Range(-0.1f, 0.1f);
         }
 
         rb.velocity = rb.velocity.normalized * speed;
-        
 
-        //rb.rotation = Quaternion.LookRotation(rb.velocity.normalized, Vector3.back);
-        float angle = Vector3.Angle(rb.velocity, fromRotation);
-        print(angle);
-        //visual.rotation = Quaternion.Euler(0,0,angle);
-        //visual.rotation.SetLookRotation(rb.velocity);
 
-        fromRotation = rb.velocity;
+    }
+
+    void RotateVisual(){
+        float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg - 90f;
+        visual.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     void LaunchBall()
@@ -72,7 +81,6 @@ public class Ball : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.AddForce(Vector3.up * speed, ForceMode.VelocityChange);
         isInUse = true;
-        fromRotation = rb.velocity;
     }
 
     void CollideWithPaddle(Collision collision)
@@ -91,8 +99,9 @@ public class Ball : MonoBehaviour
         rb.velocity = direction * speed;
     }
 
-    void DestroyThisBall(){
-        if(isInUse)
+    void DestroyThisBall()
+    {
+        if (isInUse)
             Destroy(this.gameObject);
     }
 }

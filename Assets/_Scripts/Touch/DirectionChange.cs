@@ -14,7 +14,7 @@ public class DirectionChange : PlaceableObject
         {   
             if(primed){
                 EnergyManager.active.UseEnergyBars(1);
-                ball.GetComponent<Rigidbody>().velocity = desiredDirection.normalized * ball.speed;
+                ball.rb.velocity = desiredDirection.normalized * ball.speed;
                 primed = false;
             }
             return;
@@ -26,7 +26,8 @@ public class DirectionChange : PlaceableObject
         }
         primed = true;
         desiredDirection = touchPosition;
-        ball = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>();
+        //ball = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>();
+        ball = GameObject.FindObjectOfType<Ball>();
         Vector3 ballOffset = ball.transform.position - objectPositionAtTouch + objectTouchOffset;
         desiredDirection = (desiredDirection + ballOffset) - ball.transform.position;
     }
