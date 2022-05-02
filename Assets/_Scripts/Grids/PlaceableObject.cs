@@ -16,6 +16,9 @@ public class PlaceableObject : TouchableObject
     public List<PlaceableObject> objectsConnectedTo;
 
 
+    public virtual event Action ProgramTriggered;
+
+
     public override void OnEnable()
     {
         base.OnEnable();
@@ -51,15 +54,38 @@ public class PlaceableObject : TouchableObject
             if (InventoryGrid.active.PlaceObject(this))
             {
                 GetConnectionsV2();
+
+                // if (objectsConnectedTo.Count > 0)
+                // {
+                //     SubscribeToConnections();
+                // }
             }
 
         }
     }
 
+    //Iportant, don't delete!
+    protected virtual void SubscribeToConnection(PlaceableObject obj)
+    {
+
+    }
+
+    protected virtual void UnsubscribeFromConnection(PlaceableObject obj)
+    {
+
+    }
+
+    protected virtual void SubscribeToConnections()
+    {
+        
+    }
+    //-----------------------
+
     void GetConnectionsV2()
     {
         foreach (PlaceableObject neighbour in objectsConnectedTo)
-        {
+        {   
+            UnsubscribeFromConnection(neighbour);
             neighbour.objectsConnectedTo.Remove(this);
         }
         objectsConnectedTo.Clear();
@@ -69,32 +95,30 @@ public class PlaceableObject : TouchableObject
         {
             if (InventoryGrid.active.cellFree.TryGetValue(new Vector3Int(thisCell.x - 1, thisCell.y, thisCell.z), out obj))
             {
-                if (obj != null && obj != this && !objectsConnectedTo.Contains(obj))
-                {
-                    objectsConnectedTo.Add(obj);
-                    obj.objectsConnectedTo.Add(this);
-                }
+                ConnectObjects();
             }
             if (InventoryGrid.active.cellFree.TryGetValue(new Vector3Int(thisCell.x + 1, thisCell.y, thisCell.z), out obj))
             {
-                if (obj != null && obj != this && !objectsConnectedTo.Contains(obj))
-                {
-                    objectsConnectedTo.Add(obj);
-                }
+                ConnectObjects();
             }
             if (InventoryGrid.active.cellFree.TryGetValue(new Vector3Int(thisCell.x, thisCell.y - 1, thisCell.z), out obj))
             {
-                if (obj != null && obj != this && !objectsConnectedTo.Contains(obj))
-                {
-                    objectsConnectedTo.Add(obj);
-                }
+                ConnectObjects();
             }
             if (InventoryGrid.active.cellFree.TryGetValue(new Vector3Int(thisCell.x, thisCell.y + 1, thisCell.z), out obj))
             {
-                if (obj != null && obj != this && !objectsConnectedTo.Contains(obj))
-                {
-                    objectsConnectedTo.Add(obj);
-                }
+                ConnectObjects();
+            }
+        }
+
+        void ConnectObjects()
+        {
+            if (obj != null && obj != this && !objectsConnectedTo.Contains(obj))
+            {   
+                SubscribeToConnection(obj);
+                
+                objectsConnectedTo.Add(obj);
+                obj.objectsConnectedTo.Add(this);
             }
         }
     }

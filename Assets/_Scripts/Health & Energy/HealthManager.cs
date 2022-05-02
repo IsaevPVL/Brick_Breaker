@@ -7,6 +7,8 @@ using System;
 
 public class HealthManager : MonoBehaviour
 {
+    public static HealthManager active { get; private set; }
+
     [SerializeField] TextMeshPro ballCount;
     [SerializeField] Transform healthbar;
     Stack<int> balls = new Stack<int>();
@@ -16,7 +18,21 @@ public class HealthManager : MonoBehaviour
 
     public static event Action BallLoaded;
 
-    private void OnEnable() {
+    private void Awake()
+    {
+        if (active != null && active != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            active = this;
+        }
+
+    }
+
+    private void OnEnable()
+    {
         Ball.DeathLineTouched += UseBall;
         Hitter.DamageTaken += RemoveHealth;
 
@@ -24,48 +40,60 @@ public class HealthManager : MonoBehaviour
         AddBall(3);
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         Ball.DeathLineTouched -= UseBall;
         Hitter.DamageTaken -= RemoveHealth;
     }
 
-    private void Start() {
+    private void Start()
+    {
         UseBall();
     }
 
-    void SetHealthbar(int amount){
+    void SetHealthbar(int amount)
+    {
         healthbar.transform.DOScaleX(maxHealthbarScale * (amount / 100f), 1f);
     }
 
-    void RemoveHealth(int amount){
+    public void RemoveHealth(int amount)
+    {
         currentHealth -= amount;
-        if(currentHealth <= 0){
+        if (currentHealth <= 0)
+        {
             UseBall();
             return;
         }
         SetHealthbar(currentHealth);
     }
 
-    void AddHealth(int amount){
+    public void AddHealth(int amount)
+    {
         currentHealth = Mathf.Min(currentHealth + amount, 100);
         SetHealthbar(currentHealth);
     }
 
-    void UseBall(){
-        if(balls.Count > 0){
+    void UseBall()
+    {
+        if (balls.Count > 0)
+        {
             BallLoaded?.Invoke();
             AddHealth(balls.Pop());
-            UpdateCounter(); 
-        }else{
+            UpdateCounter();
+        }
+        else
+        {
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
-    void StoreBall(){
+    void StoreBall()
+    {
         balls.Push(currentHealth);
     }
 
-    void AddBall(int amount = 1){
+    public void AddBall(int amount = 1)
+    {
         for (int i = 0; i < amount; i++)
         {
             balls.Push(100);
@@ -73,26 +101,31 @@ public class HealthManager : MonoBehaviour
         UpdateCounter();
     }
 
-    void RemoveBall(){
+    void RemoveBall()
+    {
         balls.Pop();
-        UpdateCounter();   
+        UpdateCounter();
     }
 
-    void UpdateCounter(){
+    void UpdateCounter()
+    {
         ballCount.text = balls.Count.ToString();
     }
 
     //DEBUG
     [ContextMenu("Remove 10 Health")]
-    void Remove10Health(){
+    void Remove10Health()
+    {
         RemoveHealth(10);
     }
     [ContextMenu("Remove 100 Health")]
-    void Remove100Health(){
+    void Remove100Health()
+    {
         RemoveHealth(100);
     }
     [ContextMenu("Add 10 Health")]
-    void Add10Health(){
+    void Add10Health()
+    {
         AddHealth(10);
     }
 }

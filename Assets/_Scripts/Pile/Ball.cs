@@ -14,6 +14,7 @@ public class Ball : MonoBehaviour
     //Vector3 fromRotation;
 
     public static event Action DeathLineTouched;
+    public static event Action<GameObject> BrickHit;
 
     private void OnEnable()
     {
@@ -32,12 +33,13 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        print(rb.velocity);
 
         if (collision.collider.CompareTag("Brick"))
         {
             ContactPoint contact = collision.contacts[0];
             GameObject hit = Instantiate(brickCollision, contact.point, Quaternion.FromToRotation(Vector3.up, contact.normal));
+
+            BrickHit?.Invoke(collision.gameObject);
         }
         else if (collision.collider.CompareTag("Hitter"))
         {

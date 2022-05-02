@@ -1,10 +1,13 @@
 using UnityEngine;
+using System;
 
 public class DirectionChange : PlaceableObject
 {
     Ball ball;
     Vector3 desiredDirection;
     bool primed;
+
+    public override event Action ProgramTriggered;
 
     //DEAL WITH OVERRIDE
     public override void Update()
@@ -16,6 +19,8 @@ public class DirectionChange : PlaceableObject
                 EnergyManager.active.UseEnergyBars(1);
                 ball.rb.velocity = desiredDirection.normalized * ball.speed;
                 primed = false;
+
+                ProgramTriggered?.Invoke();
             }
             return;
         }
