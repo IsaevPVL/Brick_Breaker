@@ -11,6 +11,7 @@ public class Ball : MonoBehaviour
     public GameObject brickCollision;
 
     public Transform visual;
+    Quaternion defaultVisualRotaion;
     //Vector3 fromRotation;
 
     public static event Action DeathLineTouched;
@@ -22,7 +23,7 @@ public class Ball : MonoBehaviour
         HealthManager.BallLoaded += DestroyThisBall;
         rb = GetComponent<Rigidbody>();
 
-
+        defaultVisualRotaion = visual.rotation;
     }
 
     private void OnDisable()
@@ -71,8 +72,14 @@ public class Ball : MonoBehaviour
 
     }
 
+    public void SetDirection(Vector3 direction){
+        rb.velocity = direction.normalized * speed;
+        RotateVisual();
+    }
+
     void RotateVisual(){
         float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg - 90f;
+        //visual.rotation = Quaternion.Euler(angle, visual.rotation.eulerAngles.y, visual.rotation.eulerAngles.z);
         visual.rotation = Quaternion.Euler(0, 0, angle);
     }
 

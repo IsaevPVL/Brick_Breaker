@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class PlaceableObject : TouchableObject
 {
     public Vector3Int defaultCell;
+    [SerializeField] float zThickness = 0.2f;
     [SerializeField] bool isUnlocked = true;
     public Transform visual;
     [SerializeField] GameObject text;
@@ -160,16 +161,17 @@ public class PlaceableObject : TouchableObject
     {
         scale *= dimensions;
         BoxCollider box = this.gameObject.AddComponent<BoxCollider>();
-        box.size = new Vector3(scale.x, scale.y, 0.2f);
-        box.center = new Vector3(scale.x / 2, scale.y / 2, -0.1f);
+        box.size = new Vector3(scale.x, scale.y, zThickness);
+        box.center = new Vector3(scale.x / 2, scale.y / 2, -zThickness / 2);
 
         if (visual != null)
         {
-            visual.localScale = new Vector3(scale.x, scale.y, 0.2f);
+            visual.localScale = new Vector3(scale.x, scale.y, zThickness);
         }
 
         if (text != null)
         {
+            text.transform.localPosition = new Vector3(0, 0, -zThickness - 0.01f);
             text.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, scale.x);
             text.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, scale.y);
         }

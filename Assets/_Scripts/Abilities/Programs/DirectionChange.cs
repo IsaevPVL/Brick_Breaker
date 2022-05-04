@@ -17,7 +17,8 @@ public class DirectionChange : PlaceableObject
         {   
             if(primed){
                 EnergyManager.active.UseEnergyBars(1);
-                ball.rb.velocity = desiredDirection.normalized * ball.speed;
+                //ball.rb.velocity = desiredDirection.normalized * ball.speed;
+                ball.SetDirection(desiredDirection);
                 primed = false;
 
                 ProgramTriggered?.Invoke();
