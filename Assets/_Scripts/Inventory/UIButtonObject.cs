@@ -21,7 +21,7 @@ public class UIButtonObject : PlaceableObject
 
     public override void Update()
     {
-        base.Update();
+        //base.Update();
 
         if (isTapped)
         {

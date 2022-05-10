@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] UIButtonObject menu;
     Dictionary<UIState, UIButtonObject> buttons;
 
-    UIState currentState = UIState.Gameplay;
+    public UIState currentState { get; private set; }  = UIState.Gameplay;
 
     public static event Action<UIState> StateChanged; //NEED?
 

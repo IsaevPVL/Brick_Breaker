@@ -5,7 +5,7 @@ using System;
 
 public class Program : PlaceableObject
 {
-    public static event Action ProgramTriggered;
+    //public static event Action ProgramTriggered;
     
     public override void OnEnable()
     {

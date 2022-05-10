@@ -105,6 +105,7 @@ public class InventoryGrid : MonoBehaviour
 
         if (isFree)
         {
+            //print(obj.occupiedCells.Count);
             obj.occupiedCells.Clear();
             for (int i = tempCells.Count; i > 0; i--)
             {
@@ -112,20 +113,28 @@ public class InventoryGrid : MonoBehaviour
                 cellFree[tempCells.Pop()] = obj;
             }
             obj.transform.position = inventoryGridLayout.CellToWorld(startCell) + new Vector3(inventoryGridLayout.cellGap.x / 2, 0, 0);
-            
-            if(!toCell){
+
+            if (!toCell)
+            {
                 ObjectPlaced?.Invoke(obj);
             }
             return true;
         }
         else
         {
-            foreach (Vector3Int cell in obj.occupiedCells)
+            if (toCell)
             {
-                cellFree[cell] = obj;
+                return false;
             }
+            else
+            {
+                foreach (Vector3Int cell in obj.occupiedCells)
+                {
+                    cellFree[cell] = obj;
+                }
 
-            return false;
+                return false;
+            }
         }
     }
 

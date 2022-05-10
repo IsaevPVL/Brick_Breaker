@@ -5,7 +5,7 @@ using System;
 public class TouchableObject : MonoBehaviour
 {
     //public TouchManager touchManager;
-    [Range(0, 1), Space] public float tapWindow = 0.1f;
+    [Range(0, 1), SerializeField] float tapWindow = 0.1f;
     public bool canBeDoubleTapped = false;
 
     public bool isTouched { get; private set; }
@@ -17,8 +17,8 @@ public class TouchableObject : MonoBehaviour
     public Vector3 touchPosition { get; private set; }
     int numberOfTaps;
     float tapDuration;
-    public bool isHeld { get; private set; } = false;
-    public bool isTapped { get; private set; } = false;
+    protected bool isHeld { get; private set; } = false;
+    protected bool isTapped { get; private set; } = false;
 
     public static event Action<string> ObjectWasTapped;
     public static event Action<string> ObjectWasDoubleTapped;
