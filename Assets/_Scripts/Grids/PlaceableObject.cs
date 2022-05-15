@@ -14,6 +14,8 @@ public class PlaceableObject : TouchableObject
     [SerializeField] GameObject deleteIcon = null;
     public Vector2Int dimensions;
 
+    public FileElement myCurator;
+
     public Stack<Vector3Int> occupiedCells;
     public List<PlaceableObject> objectsConnectedTo;
 
@@ -25,7 +27,7 @@ public class PlaceableObject : TouchableObject
     public override void OnEnable()
     {
         base.OnEnable();
-        InventoryGrid.NewScale += NewScale;
+        //InventoryGrid.NewScale += NewScale;
         //InventoryGrid.ObjectPlaced += GetConnections;
         UIManager.StateChanged += ApplyCurrentState;
 
@@ -35,7 +37,7 @@ public class PlaceableObject : TouchableObject
     public override void OnDisable()
     {
         base.OnDisable();
-        InventoryGrid.NewScale -= NewScale;
+        //InventoryGrid.NewScale -= NewScale;
         //InventoryGrid.ObjectPlaced -= GetConnections;
         UIManager.StateChanged -= ApplyCurrentState;
     }
@@ -202,7 +204,7 @@ public class PlaceableObject : TouchableObject
         }
 
         if(deleteIcon != null){
-            deleteIcon.transform.localPosition = new Vector3(scale.x, scale.y, -zThickness - 0.01f);
+            //deleteIcon.transform.localPosition = new Vector3(scale.x, scale.y, -zThickness - 0.01f);
         }
     }
 
@@ -219,6 +221,15 @@ public class PlaceableObject : TouchableObject
         {
             isUnlocked = false;
             //deleteIcon?.SetActive(false);
+        }
+    }
+
+    public override void OnTouchEnd()
+    {
+        //base.OnTouchEnd();
+        if(objectTouchEndedOver?.name == "Background"){
+            myCurator.ReturnTo(defaultCell);
+            Destroy(this.gameObject);
         }
     }
 }

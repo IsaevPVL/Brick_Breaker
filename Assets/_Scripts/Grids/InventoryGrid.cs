@@ -114,6 +114,11 @@ public class InventoryGrid : MonoBehaviour
             }
             obj.transform.position = inventoryGridLayout.CellToWorld(startCell) + new Vector3(inventoryGridLayout.cellGap.x / 2, 0, 0);
 
+            //Updating object position in curator
+            obj.myCurator?.Move(obj.defaultCell, startCell);
+            obj.defaultCell = startCell;
+            //
+
             if (!toCell)
             {
                 ObjectPlaced?.Invoke(obj);

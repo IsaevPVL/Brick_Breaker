@@ -6,10 +6,10 @@ public class TouchManager : MonoBehaviour
     public static TouchManager active { get; private set; }
 
     public static event Action<GameObject> ObjectWasTouched;
-    public static event Action<GameObject> TouchEnded;
+    public static event Action<GameObject, GameObject> TouchEnded;
 
     Camera cam;
-    
+
     Touch touch;
     RaycastHit objectTouched;
     float positionZ;
@@ -47,7 +47,7 @@ public class TouchManager : MonoBehaviour
 
             Ray ray = cam.ScreenPointToRay(touch.position);
             if (Physics.Raycast(ray, out objectTouched))
-            {   
+            {
                 //Debug.Log(objectTouched.collider.name + " is touched");
                 positionZ = objectTouched.transform.position.z - cam.transform.position.z;
 
@@ -72,7 +72,16 @@ public class TouchManager : MonoBehaviour
 
             if (objectTouched.transform != null)
             {
-                TouchEnded?.Invoke(objectTouched.transform.gameObject);
+                if (Physics.Raycast(cam.ScreenPointToRay(new Vector3(touch.position.x, touch.position.y, 0)), out RaycastHit objectAtTouchEnd))
+                {   
+                    //print("Object got: " + objectAtTouchEnd.transform.gameObject.name);
+                    TouchEnded?.Invoke(objectTouched.transform.gameObject, objectAtTouchEnd.transform.gameObject);
+                }
+                else
+                {
+                    //print("Object not got");
+                    TouchEnded?.Invoke(objectTouched.transform.gameObject, null);
+                }
             }
         }
     }

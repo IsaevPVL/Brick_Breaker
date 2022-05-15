@@ -17,6 +17,7 @@ public class TouchableObject : MonoBehaviour
     public Vector3 touchPosition { get; private set; }
     int numberOfTaps;
     float tapDuration;
+    public GameObject objectTouchEndedOver; //{ get; private set; }
     protected bool isHeld { get; private set; } = false;
     protected bool isTapped { get; private set; } = false;
 
@@ -81,13 +82,15 @@ public class TouchableObject : MonoBehaviour
         }
     }
 
-    void TouchEnded(GameObject obj)
+    void TouchEnded(GameObject objectTouched, GameObject objectTouchEndedOver)
     {
-        if (obj == this.gameObject)
+        if (objectTouched == this.gameObject)
         {
             tapDuration = 0;
             isHeld = false;
             isTouched = false;
+
+            this.objectTouchEndedOver = objectTouchEndedOver;
 
             if (canBeDoubleTapped)
             {
@@ -98,7 +101,13 @@ public class TouchableObject : MonoBehaviour
                 Tapped();
                 //isTapped();
             }
+
+            OnTouchEnd();
         }
+    }
+
+    public virtual void OnTouchEnd(){
+
     }
 
     void Tapped()
