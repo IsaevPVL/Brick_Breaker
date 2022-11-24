@@ -23,4 +23,3 @@
 
 Под ландшафтную ориентацию тоже, правда под нее не заточено
 ![](https://github.com/IsaevPVL/Net-Breaker/blob/main/Screenshot_20221124_012308.png)
-
